@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Clean black and white base */
+    --background: 0 0% 100%; /* Pure white */
+    --foreground: 0 0% 9%; /* Near black text */
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 0 0% 9%; /* Black text on cards */
+    --popover: 0 0% 100%; /* White popovers */
+    --popover-foreground: 0 0% 9%; /* Black text on popovers */
+    
+    /* Primary accent color #1368A5 */
+    --primary: 207 75% 36%; /* #1368A5 */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    
+    /* Subtle grays for secondary elements */
+    --secondary: 0 0% 96%; /* Very light gray */
+    --secondary-foreground: 0 0% 9%; /* Black text */
+    --muted: 0 0% 96%; /* Light gray for muted elements */
+    --muted-foreground: 0 0% 45%; /* Medium gray for muted text */
+    
+    /* Accent same as primary */
+    --accent: 0 0% 96%; /* Light gray accent */
+    --accent-foreground: 0 0% 9%; /* Black text */
+    
+    /* Status colors */
+    --destructive: 0 84% 60%; /* Red for destructive/error */
+    --destructive-foreground: 0 0% 98%; /* White text */
+    --success: 142 71% 45%; /* Green for success */
+    --success-foreground: 0 0% 98%; /* White text */
+    --warning: 48 96% 53%; /* Yellow for warning */
+    --warning-foreground: 0 0% 9%; /* Black text */
+    
+    /* Borders and inputs */
+    --border: 0 0% 90%; /* Light gray borders */
+    --input: 0 0% 90%; /* Light gray input backgrounds */
+    --ring: 207 75% 36%; /* Primary color for focus rings */
+    
+    /* Simplified chart colors using status colors */
+    --chart-1: 207 75% 36%; /* Primary blue */
+    --chart-2: 142 71% 45%; /* Green */
+    --chart-3: 0 84% 60%; /* Red */
+    --chart-4: 48 96% 53%; /* Yellow */
+    --chart-5: 0 0% 45%; /* Gray */
+    
+    --radius: 0.5rem;
+    
+    /* Clean sidebar */
+    --sidebar-background: 0 0% 98%; /* Very light gray */
+    --sidebar-foreground: 0 0% 9%; /* Black text */
+    --sidebar-primary: 207 75% 36%; /* Primary accent */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text */
+    --sidebar-accent: 0 0% 96%; /* Light gray accent */
+    --sidebar-accent-foreground: 0 0% 9%; /* Black text */
+    --sidebar-border: 0 0% 90%; /* Light border */
+    --sidebar-ring: 207 75% 36%; /* Primary focus ring */
+  }
+  .dark {
+    /* Clean dark theme */
+    --background: 0 0% 9%; /* Near black background */
+    --foreground: 0 0% 98%; /* White text */
+    --card: 0 0% 9%; /* Dark cards */
+    --card-foreground: 0 0% 98%; /* White text on cards */
+    --popover: 0 0% 9%; /* Dark popovers */
+    --popover-foreground: 0 0% 98%; /* White text on popovers */
+    
+    /* Primary accent color remains the same */
+    --primary: 207 75% 36%; /* #1368A5 */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    
+    /* Dark secondary elements */
+    --secondary: 0 0% 15%; /* Dark gray */
+    --secondary-foreground: 0 0% 98%; /* White text */
+    --muted: 0 0% 15%; /* Dark gray for muted elements */
+    --muted-foreground: 0 0% 65%; /* Light gray for muted text */
+    
+    /* Dark accent */
+    --accent: 0 0% 15%; /* Dark gray accent */
+    --accent-foreground: 0 0% 98%; /* White text */
+    
+    /* Status colors for dark mode */
+    --destructive: 0 84% 60%; /* Red */
+    --destructive-foreground: 0 0% 98%; /* White text */
+    --success: 142 71% 45%; /* Green */
+    --success-foreground: 0 0% 98%; /* White text */
+    --warning: 48 96% 53%; /* Yellow */
+    --warning-foreground: 0 0% 9%; /* Black text */
+    
+    /* Dark borders and inputs */
+    --border: 0 0% 20%; /* Dark gray borders */
+    --input: 0 0% 20%; /* Dark gray input backgrounds */
+    --ring: 207 75% 36%; /* Primary color for focus rings */
+    
+    /* Dark chart colors */
+    --chart-1: 207 75% 36%; /* Primary blue */
+    --chart-2: 142 71% 45%; /* Green */
+    --chart-3: 0 84% 60%; /* Red */
+    --chart-4: 48 96% 53%; /* Yellow */
+    --chart-5: 0 0% 65%; /* Light gray */
+    
+    /* Dark sidebar */
+    --sidebar-background: 0 0% 6%; /* Darker background */
+    --sidebar-foreground: 0 0% 98%; /* White text */
+    --sidebar-primary: 207 75% 36%; /* Primary accent */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text */
+    --sidebar-accent: 0 0% 15%; /* Dark gray accent */
+    --sidebar-accent-foreground: 0 0% 98%; /* White text */
+    --sidebar-border: 0 0% 20%; /* Dark border */
+    --sidebar-ring: 207 75% 36%; /* Primary focus ring */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
