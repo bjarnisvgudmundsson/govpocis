@@ -13,6 +13,8 @@ import {
   Files,
   LogOut,
   BarChart3,
+  Shield,
+  User,
 } from 'lucide-react';
 import { getStoredCredentials, clearCredentials } from '@/lib/api-client';
 import type { CredentialInfo } from '@/types';
@@ -27,10 +29,26 @@ const navigationItems = [
     bgColor: 'hover:bg-accent'
   },
   {
+    name: 'VAKT',
+    href: '/scr/fangavordur',
+    icon: Shield,
+    badge: null,
+    color: 'text-muted-foreground',
+    bgColor: 'hover:bg-accent'
+  },
+  {
+    name: 'STAÐA',
+    href: '/scr/stjori',
+    icon: User,
+    badge: null,
+    color: 'text-muted-foreground',
+    bgColor: 'hover:bg-accent'
+  },
+  {
     name: 'SAMÞYKKTIR',
     href: '/approvals',
     icon: CheckSquare,
-    badge: 15, 
+    badge: 15,
     color: 'text-muted-foreground',
     bgColor: 'hover:bg-accent'
   },
