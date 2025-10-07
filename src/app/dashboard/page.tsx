@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -6,56 +5,71 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { 
-  CheckCircle, 
-  Briefcase,
-  Files,
-  FileText as FileTextIcon, // Renamed to avoid conflict with component
+import { KpiTileSegmented } from '@/components/dashboard/KpiTileSegmented';
+import { ItemDetailsDialog } from '@/components/dashboard/ItemDetailsDialog';
+import { ItemEditDialog } from '@/components/dashboard/ItemEditDialog';
+import {
   AlertTriangle,
   Clock,
-  Link as LinkIcon, // Renamed to avoid conflict
-  Loader2
+  Loader2,
+  Eye,
+  Edit
 } from 'lucide-react';
 import { getStoredCredentials } from '@/lib/api-client';
-import { cn } from '@/lib/utils';
 
-// Simulating moduleColors and priorityBackgrounds from prompt
-const moduleColors = {
-  dashboard: { border: 'border-l-blue-600', bg: 'bg-blue-50', icon: 'text-blue-600' },
-  cases: { border: 'border-l-purple-600', bg: 'bg-purple-50', icon: 'text-purple-600' },
-  contracts: { border: 'border-l-green-600', bg: 'bg-green-50', icon: 'text-green-600' },
-  approvals: { border: 'border-l-orange-600', bg: 'bg-orange-50', icon: 'text-orange-600' },
-  tasks: { border: 'border-l-red-600', bg: 'bg-red-50', icon: 'text-red-600' },
-  documents: { border: 'border-l-indigo-600', bg: 'bg-indigo-50', icon: 'text-indigo-600' }
-};
+// Custom dashboard status badge component with exact specification colors
+function DashboardStatusBadge({ status }: { status: string }) {
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'VIRKUR':
+        return { backgroundColor: '#28A745', color: 'white' }; // Green
+      case 'ENDURSKOÐUN':
+        return { backgroundColor: '#FFC107', color: 'white' }; // Yellow
+      case 'ENDURNÝJUN':
+        return { backgroundColor: '#007BFF', color: 'white' }; // Blue
+      case 'Í VANSKILUM':
+      case 'VANSKIL':
+        return { backgroundColor: '#E03131', color: 'white' }; // Red
+      case 'Í VINNSLU':
+        return { backgroundColor: '#007BFF', color: 'white' }; // Blue
+      case 'VÆNTANLEGT':
+        return { backgroundColor: '#6B7280', color: 'white' }; // Grey
+      case 'EINDAGI Í DAG':
+        return { backgroundColor: '#FF9800', color: 'white' }; // Orange/Amber
+      default:
+        return { backgroundColor: '#6B7280', color: 'white' }; // Default grey
+    }
+  };
 
-const priorityBackgrounds = {
-  critical: 'bg-red-50', // VANSKIL
-  high: 'bg-orange-50', // EINDAGI Í DAG
-  medium: 'bg-yellow-50', // DRÖG / BÍÐUR SAMÞYKKIS (example)
-  low: 'bg-gray-50' // VÆNTANLEGT
-};
-
+  return (
+    <span
+      className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium tracking-wide uppercase"
+      style={getStatusStyle(status)}
+    >
+      {status}
+    </span>
+  );
+}
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false); // Set to false by default
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const hasCheckedRef = useRef(false);
-  
+
   useEffect(() => {
     if (hasCheckedRef.current) return;
     hasCheckedRef.current = true;
-    
+
     const { token } = getStoredCredentials();
     if (!token) {
       router.push('/');
       return;
     }
-    // Simulate data fetching if needed
-    setTimeout(() => setLoading(false), 500); // Simulate loading delay
   }, [router]);
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-var(--nav-height,80px))]">
@@ -68,241 +82,273 @@ export default function DashboardPage() {
       </div>
     );
   }
-  
+
   const kpiData = [
     {
       title: 'SAMÞYKKTIR',
-      total: 15,
-      overdue: 3,
-      dueToday: 4,
-      moduleStyle: moduleColors.approvals,
-      icon: CheckCircle,
+      ok: 12,
+      warning: 6,
+      overdue: 2,
+      trend: { value: 12.5, direction: "up" as const },
       href: '/approvals'
     },
     {
       title: 'VERK',
-      total: 34,
-      overdue: 7,
-      dueToday: 9,
-      moduleStyle: moduleColors.tasks,
-      icon: Briefcase,
+      ok: 18,
+      warning: 12,
+      overdue: 8,
+      trend: { value: 3.2, direction: "down" as const },
       href: '/tasks'
     },
     {
       title: 'SKJÖL Í VINNSLU',
-      total: 12,
-      overdue: 2,
-      dueToday: 3,
-      moduleStyle: moduleColors.documents,
-      icon: Files,
+      ok: 25,
+      warning: 4,
+      overdue: 1,
+      trend: { value: 5.0, direction: "up" as const },
       href: '/documents'
     },
     {
       title: 'MÁL',
-      total: 22,
-      overdue: 2,
-      dueToday: 5,
-      moduleStyle: moduleColors.cases,
-      icon: FileTextIcon,
+      ok: 8,
+      warning: 9,
+      overdue: 7,
+      trend: { value: 0.0, direction: "flat" as const },
       href: '/mycases'
     },
     {
       title: 'SAMNINGAR',
-      total: 10,
-      overdue: 1,
-      dueToday: 2,
-      moduleStyle: moduleColors.contracts,
-      icon: FileTextIcon, // Using FileTextIcon for contracts as well
+      ok: 15,
+      warning: 2,
+      overdue: 3,
+      trend: { value: 8.0, direction: "up" as const },
       href: '/contracts'
     }
   ];
-  
+
+  // Mock data for critical items
+  const criticalItems = [
+    {
+      id: 1,
+      type: 'approval' as const,
+      title: 'Öryggisbúnaður: Litla Hraun',
+      status: 'VANSKIL',
+      amount: '450.000 kr',
+      department: 'Öryggisdeild',
+      deadline: '27.05.2025',
+      description: 'Samþykkt þarf fyrir kaup á öryggismyndavélakerfi fyrir Litla Hraun fangelsið.',
+      category: 'Öryggismyndavélakerfi uppfærsla'
+    },
+    {
+      id: 2,
+      type: 'contract' as const,
+      title: 'Fangaflutningar: Þyrluþjónusta',
+      status: 'EINDAGI Í DAG',
+      amount: '3.200.000 kr',
+      vendor: 'Landhelgisgæslan',
+      department: 'Flutningsdeild',
+      deadline: '28.05.2025',
+      description: 'Þjónustusamningur við Landhelgisgæsluna fyrir fangaflutning með þyrlu.',
+      category: 'Landhelgisgæslan - þjónustusamningur'
+    },
+    {
+      id: 3,
+      type: 'task' as const,
+      title: 'Öryggisúttekt: Hólmsheiði',
+      status: 'VANSKIL',
+      assignee: 'Guðmundur Þórsson',
+      department: 'Öryggisdeild',
+      deadline: '26.05.2025',
+      description: 'Mánaðarleg öryggisúttekt sem á að fara fram í Hólmsheiði fangelsi.',
+      category: 'Mánaðarleg öryggisúttekt'
+    },
+    {
+      id: 4,
+      type: 'document' as const,
+      title: 'Endurhæfingaráætlun 2025',
+      status: 'EINDAGI Í DAG',
+      assignee: 'Sigríður Haraldsdóttir',
+      department: 'Endurhæfingardeild',
+      deadline: '28.05.2025',
+      description: 'Ársáætlun endurhæfingardeildar sem þarf að klára fyrir árið 2025.',
+      category: 'Ársáætlun endurhæfingardeildar'
+    }
+  ];
+
+  // Mock data for upcoming items
+  const upcomingItems = [
+    {
+      id: 5,
+      type: 'task' as const,
+      title: 'Ráðning: Fangavörður - Litla-Hraun',
+      status: 'VÆNTANLEGT',
+      department: 'Mannauðsdeild',
+      deadline: '29.05.2025',
+      description: 'Ráðningarferli fyrir nýjan fangavörð í Litla Hraun.',
+      assignee: 'Mannauðsdeild'
+    },
+    {
+      id: 6,
+      type: 'document' as const,
+      title: 'Öryggisleiðbeiningar uppfærsla',
+      status: 'Í VINNSLU',
+      department: 'Öryggisdeild',
+      deadline: '30.05.2025',
+      description: 'Uppfærsla á öryggisleiðbeiningum fyrir allt starfsfólk.',
+      assignee: 'Öryggisdeild'
+    },
+    {
+      id: 7,
+      type: 'contract' as const,
+      title: 'Samningur við heilsugæslu',
+      status: 'VÆNTANLEGT',
+      vendor: 'Heilsugæsla höfuðborgarsvæðisins',
+      department: 'Heilbrigðisdeild',
+      deadline: '02.06.2025',
+      description: 'Endurnýjun á samningi við heilsugæslu fyrir heilbrigðisþjónustu fanga.',
+      amount: 'kr. 850.000'
+    },
+    {
+      id: 8,
+      type: 'task' as const,
+      title: 'Árlegt öryggismat - Hólmsheiði',
+      status: 'Í VINNSLU',
+      department: 'Öryggisdeild',
+      deadline: '05.06.2025',
+      description: 'Árlegt öryggismat sem þarf að fara fram í Hólmsheiði fangelsi.',
+      assignee: 'Öryggisdeild'
+    }
+  ];
+
+  const handleItemView = (item: any) => {
+    setSelectedItem(item);
+    setDialogOpen(true);
+  };
+
+  const handleItemEdit = (item: any) => {
+    setSelectedItem(item);
+    setEditDialogOpen(true);
+  };
+
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold font-headline text-gray-900">MÆLABORÐ</h1>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
-        {kpiData.map((kpi) => {
-          const Icon = kpi.icon;
-          return (
-            <Card 
-              key={kpi.title} 
-              className={cn(
-                'border-l-4 shadow-lg hover:shadow-xl transition-shadow cursor-pointer', 
-                kpi.moduleStyle.border, 
-                kpi.moduleStyle.bg
-              )}
-              onClick={() => router.push(kpi.href)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 uppercase">{kpi.title}</p>
-                    <p className="text-3xl font-bold mt-1">{kpi.total}</p>
-                    {kpi.overdue > 0 && <p className="text-xs text-red-600 font-medium mt-1">{kpi.overdue} Í VANSKILUM</p>}
-                  </div>
-                  <Icon className={cn('w-10 h-10 opacity-20', kpi.moduleStyle.icon)} />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 mb-8">
+        {kpiData.map((kpi) => (
+          <KpiTileSegmented
+            key={kpi.title}
+            title={kpi.title}
+            ok={kpi.ok}
+            warning={kpi.warning}
+            overdue={kpi.overdue}
+            trend={kpi.trend}
+            href={kpi.href}
+          />
+        ))}
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-lg">
+        <Card className="bg-white border border-gray-200 rounded-2xl shadow-sm min-h-[44rem]">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center text-lg font-headline">
               <AlertTriangle className="w-5 h-5 mr-2 text-orange-600" />
               ÁRÍÐANDI - KREFST AÐGERÐA
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 max-h-[400px] overflow-y-auto">
-            {/* Critical Item 1 */}
-            <div className={cn("p-4 rounded-lg border", priorityBackgrounds.critical, moduleColors.approvals.border.replace('-l-','-'))}>
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div className="flex-1">
-                  <StatusBadge status="VANSKIL" />
-                  <p className="font-medium mt-3">Öryggisbúnaður: Litla Hraun</p>
-                  <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
-                    <span className="font-medium">450.000 kr</span>
-                    <span>•</span>
-                    <span>Öryggisdeild</span>
-                    <span>•</span>
-                    <span>Eindagi: 27.05.2025</span>
+          <CardContent className="space-y-4 h-full overflow-y-auto">
+            {criticalItems.map((item) => (
+              <div key={item.id} className="bg-white border border-gray-200 rounded-xl p-4">
+                <DashboardStatusBadge status={item.status} />
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mt-3">
+                  <div className="flex-1">
+                    <p className="font-medium">{item.title}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
+                      {item.amount && <span className="font-medium">{item.amount}</span>}
+                      {item.amount && <span>•</span>}
+                      <span>{item.department}</span>
+                      <span>•</span>
+                      <span>Eindagi: {item.deadline}</span>
+                    </div>
+                    {item.category && (
+                      <div className="mt-3">
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-xs border border-slate-200">
+                          {item.category}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
-                  <a href="#" className="text-sm text-purple-600 hover:underline mt-2 inline-flex items-center">
-                    <LinkIcon className="w-3 h-3 mr-1" />
-                    Öryggismyndavélakerfi uppfærsla
-                  </a>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline">SKOÐA</Button>
-                  <Button size="sm" className="bg-gray-900 text-white hover:bg-gray-800">
-                    SAMÞYKKJA
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleItemView(item)}>
+                      <Eye className="w-4 h-4 mr-1" />
+                      SKOÐA
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleItemEdit(item)}>
+                      <Edit className="w-4 h-4 mr-1" />
+                      BREYTA
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Critical Item 2 */}
-            <div className={cn("p-4 rounded-lg border", priorityBackgrounds.high, moduleColors.approvals.border.replace('-l-','-'))}>
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div className="flex-1">
-                  <StatusBadge status="EINDAGI Í DAG" />
-                  <p className="font-medium mt-3">Fangaflutningar: Þyrluþjónusta</p>
-                  <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
-                    <span className="font-medium">3.200.000 kr</span>
-                    <span>•</span>
-                    <span>Flutningsdeild</span>
-                    <span>•</span>
-                    <span>Eindagi: 28.05.2025</span>
-                  </div>
-                  <div className="mt-3">
-                    <Badge variant="secondary" className="bg-gray-900 text-white text-xs">
-                      Landhelgisgæslan - þjónustusamningur
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline">SKOÐA</Button>
-                  <Button size="sm" className="bg-gray-900 text-white hover:bg-gray-800">
-                    SAMÞYKKJA
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Critical Item 3 */}
-            <div className={cn("p-4 rounded-lg border", priorityBackgrounds.critical, moduleColors.tasks.border.replace('-l-','-'))}>
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div className="flex-1">
-                  <StatusBadge status="VANSKIL" />
-                  <p className="font-medium mt-3">Öryggisúttekt: Hólmsheiði</p>
-                  <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
-                    <span>3 dagar</span>
-                    <span>•</span>
-                    <span>Guðmundur Þórsson</span>
-                    <span>•</span>
-                    <span>Eindagi: 26.05.2025</span>
-                  </div>
-                  <div className="mt-3">
-                    <Badge variant="secondary" className="bg-gray-900 text-white text-xs">
-                      Mánaðarleg öryggisúttekt
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline">SKOÐA</Button>
-                  <Button size="sm" variant="outline">OPNA</Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Critical Item 4 */}
-            <div className={cn("p-4 rounded-lg border", priorityBackgrounds.high, moduleColors.documents.border.replace('-l-','-'))}>
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div className="flex-1">
-                  <StatusBadge status="EINDAGI Í DAG" />
-                  <p className="font-medium mt-3">Endurhæfingaráætlun 2025</p>
-                  <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
-                    <span>5 dagar</span>
-                    <span>•</span>
-                    <span>Sigríður Haraldsdóttir</span>
-                    <span>•</span>
-                    <span>Eindagi: 28.05.2025</span>
-                  </div>
-                  <a href="#" className="text-sm text-purple-600 hover:underline mt-3 inline-flex items-center">
-                    <LinkIcon className="w-3 h-3 mr-1" />
-                    Ársáætlun endurhæfingardeildar
-                  </a>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline">SKOÐA</Button>
-                  <Button size="sm" variant="outline">OPNA</Button>
-                </div>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
-        
-        <Card className="shadow-lg">
+
+        <Card className="bg-white border border-gray-200 rounded-2xl shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center text-lg font-headline">
               <Clock className="w-5 h-5 mr-2 text-blue-600" />
               VÆNTANLEGT - NÆSTU 7 DAGAR
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 max-h-[400px] overflow-y-auto">
-             {/* Example Upcoming Item 1 */}
-            <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors border">
-              <div className="flex items-start justify-between">
-                <div>
-                  <StatusBadge status="VÆNTANLEGT" />
-                  <p className="font-medium mt-2">Ráðning: Fangavörður - Litla-Hraun</p>
-                  <p className="text-sm text-gray-600 mt-1">Eindagi: 29.05.2025</p>
+          <CardContent className="space-y-4">
+            {upcomingItems.map((item) => (
+              <div key={item.id} className="bg-white border border-gray-200 rounded-xl p-4">
+                <DashboardStatusBadge status={item.status} />
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mt-3">
+                  <div className="flex-1">
+                    <p className="font-medium">{item.title}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-2 text-sm text-gray-600">
+                      {item.amount && <span className="font-medium">{item.amount}</span>}
+                      {item.amount && <span>•</span>}
+                      <span>{item.department}</span>
+                      <span>•</span>
+                      <span>Eindagi: {item.deadline}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleItemView(item)}>
+                      <Eye className="w-4 h-4 mr-1" />
+                      SKOÐA
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleItemEdit(item)}>
+                      <Edit className="w-4 h-4 mr-1" />
+                      BREYTA
+                    </Button>
+                  </div>
                 </div>
-                <Button size="sm" variant="link" className="text-sm font-medium text-primary">SKOÐA</Button>
               </div>
-            </div>
-            {/* Example Upcoming Item 2 */}
-            <div className="p-3 hover:bg-gray-50 rounded-lg transition-colors border">
-              <div className="flex items-start justify-between">
-                <div>
-                  <StatusBadge status="Í VINNSLU" />
-                  <p className="font-medium mt-2">Öryggisleiðbeiningar uppfærsla</p>
-                  <p className="text-sm text-gray-600 mt-1">Eindagi: 30.05.2025</p>
-                </div>
-                <Button size="sm" variant="link" className="text-sm font-medium text-primary">OPNA</Button>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
+
+      {selectedItem && (
+        <>
+          <ItemDetailsDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            item={selectedItem}
+          />
+          <ItemEditDialog
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            item={selectedItem}
+          />
+        </>
+      )}
     </div>
   );
 }
-
-    

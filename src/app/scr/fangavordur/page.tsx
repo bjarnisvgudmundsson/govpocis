@@ -156,11 +156,11 @@ export default function FangavordurPage() {
 
         {/* Prison Map - Right side (75%) */}
         <div className="w-[75%]">
-          <Card className="h-full">
+          <Card className="h-full flex flex-col">
             <CardHeader>
               <CardTitle>Kort - Fangelisið Hólmsheiði</CardTitle>
             </CardHeader>
-            <CardContent className="h-full overflow-hidden p-2">
+            <CardContent className="flex-1 overflow-auto p-0">
               <PrisonMap />
             </CardContent>
           </Card>

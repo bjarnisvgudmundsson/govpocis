@@ -51,7 +51,7 @@ export function DiaryCalendar() {
             reporter: incident.reporter,
             status: incident.status
           })),
-          // Actions  
+          // Actions
           ...actions.map(action => ({
             id: `action-${action.id}`,
             time: action.timestamp.toLocaleTimeString('is-IS', { hour: '2-digit', minute: '2-digit' }),
@@ -73,7 +73,7 @@ export function DiaryCalendar() {
             status: 'LOKIÐ'
           },
           {
-            id: 'shift-2', 
+            id: 'shift-2',
             time: '14:00',
             type: 'Vaktskýrsla varðstjóra',
             description: 'Vaktskýrsla varðstjóra - KV - Fangelisið Kvíabryggju',
@@ -169,29 +169,29 @@ export function DiaryCalendar() {
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-3">
+    <Card className="h-full flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="space-y-2">
           <CardTitle className="text-lg">Dagbók</CardTitle>
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">{formattedDate}</p>
             <div className="flex items-center space-x-1">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() - 1)))}
               >
                 ←
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedDate(new Date())}
               >
                 Í dag
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() + 1)))}
               >
@@ -201,7 +201,7 @@ export function DiaryCalendar() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="h-full overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden p-0">
         {loading ? (
           <div className="text-center py-8 text-muted-foreground">
             Hleður dagbók...
@@ -211,43 +211,43 @@ export function DiaryCalendar() {
             Engar færslur fyrir þennan dag
           </div>
         ) : (
-          <div className="space-y-2 h-full overflow-y-auto">
-            {entries.map((entry) => (
-              <div
-                key={entry.id}
-                className="border rounded-lg p-3 hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-3 flex-1">
-                    <div className="text-sm font-mono text-muted-foreground min-w-[40px]">
+          <div className="rounded-lg border mx-4 mb-4 overflow-hidden">
+            <ul className="divide-y h-full overflow-y-auto max-h-[calc(100vh-24rem)]">
+              {entries.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="p-3 hover:bg-muted/30 transition-colors"
+                >
+                  <div className="grid grid-cols-[56px_1fr] items-start gap-3">
+                    <span className="text-xs text-muted-foreground tabular-nums pt-0.5">
                       {entry.time}
-                    </div>
-                    
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <Badge className={getTypeColor(entry.type)} size="sm">
+                    </span>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge className={getTypeColor(entry.type)} variant="secondary">
                           {entry.type}
                         </Badge>
                         {entry.prisoner && (
-                          <span className="text-base font-medium text-foreground">
+                          <span className="text-sm font-medium text-foreground">
                             {entry.prisoner}
                           </span>
                         )}
                       </div>
-                      
-                      <p className="text-sm text-foreground">
+
+                      <p className="text-sm text-foreground leading-relaxed">
                         {entry.description}
                       </p>
-                      
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+
+                      <div className="flex items-center justify-between text-xs text-muted-foreground pt-0.5">
                         <span>{entry.location}</span>
                         <StatusBadge status={entry.status} className="text-xs" />
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </CardContent>
