@@ -80,12 +80,12 @@
   padding-top: 0.5rem;
 }
 
-/* Inmates grid container */
+/* Inmates grid container - SLIGHTLY LARGER CHIPS */
 .inmates-grid {
-  --inmate-size: clamp(22px, 1.7vw, 28px);
+  --inmate: clamp(26px, 2vw, 34px);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--inmate-size), 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--inmate), 1fr));
+  gap: 6px;
   align-content: start;
   flex: 1;
   margin-top: 0.5rem;
@@ -93,37 +93,66 @@
 
 /* 2x2 grid for special units */
 .inmates-grid.is-2x2 {
-  grid-template-columns: repeat(2, var(--inmate-size));
-  grid-auto-rows: var(--inmate-size);
+  grid-template-columns: repeat(2, var(--inmate));
+  grid-auto-rows: var(--inmate);
   justify-content: start;
 }
 
-/* Individual inmate box */
+/* Individual inmate box - NO JITTER ON HOVER (Safari/Chromium stable) */
 .inmate {
+  position: relative;
   box-sizing: border-box;
-  height: var(--inmate-size);
-  min-width: var(--inmate-size);
+  height: var(--inmate);
+  min-width: var(--inmate);
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 6px;
+  border-radius: 8px;
   display: inline-grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
-  padding: 0 4px;
+  padding: 0 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   background: #fff;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 120ms ease;
+  will-change: auto;
+  /* NO transform on hover - prevents jitter */
 }
 
-.inmate:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.inmate:hover,
+.inmate:focus-visible {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35); /* focus ring only */
+  outline: none;
 }
 
-/* Status colors */
+.inmate:active {
+  opacity: 0.95; /* subtle press feedback without movement */
+}
+
+/* Status colors - NEW NAMING */
+.inmate.is-ok {
+  background: #eaf8ef;
+  border-color: #cfe8d7;
+}
+
+.inmate.is-med {
+  background: #fff7e6;
+  border-color: #ffe2a8;
+}
+
+.inmate.is-watch {
+  background: #eef3ff;
+  border-color: #d5e0ff;
+}
+
+.inmate.is-iso {
+  background: #ffeae6;
+  border-color: #ffd2c8;
+}
+
+/* Legacy status colors (keeping for backwards compatibility) */
 .inmate.status-normal {
   background-color: #f0fdf4;
   border-color: #86efac;

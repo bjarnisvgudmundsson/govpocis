@@ -10,7 +10,7 @@ import { StatCard } from '@/components/prison/stat-card';
 import { InkomModal, AtvikModal, AdgerdModal, DagbokarfaerslaModal, VaktskyrslаModal } from '@/components/prison/prison-modals';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { DiaryCalendar } from '@/components/prison/diary-calendar';
-import { PrisonMap } from '@/components/prison/prison-map';
+import PrisonMap from '@/components/prison/prison-map';
 import { prisonDataService, type LogEntry } from '@/lib/prison-data';
 
 export default function FangavordurPage() {
@@ -148,7 +148,7 @@ export default function FangavordurPage() {
 
 
       {/* Side-by-side Diary and Activity */}
-      <div className="flex gap-3 h-[680px]">
+      <div className="flex gap-3 h-[820px]">
         {/* Diary Calendar - Left side (25%) */}
         <div className="w-[25%]">
           <DiaryCalendar />
@@ -156,12 +156,12 @@ export default function FangavordurPage() {
 
         {/* Prison Map - Right side (75%) */}
         <div className="w-[75%]">
-          <Card className="h-full flex flex-col">
-            <CardHeader>
-              <CardTitle>Kort - Fangelisið Hólmsheiði</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 overflow-auto p-0">
-              <PrisonMap />
+          <Card className="h-full overflow-hidden">
+            <CardContent className="h-full p-0">
+              <PrisonMap
+                onCreateAtvik={() => setAtvikOpen(true)}
+                onCreateDagbok={() => setDagbokarOpen(true)}
+              />
             </CardContent>
           </Card>
         </div>

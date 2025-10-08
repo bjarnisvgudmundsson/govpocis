@@ -1,4 +1,4 @@
-# Firebase Studio
+# govpocis grunnur / bjarni
 
 Þetta er afbrigði fyrir FMS
 Endapunktar 

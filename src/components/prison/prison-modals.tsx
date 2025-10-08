@@ -213,7 +213,7 @@ export function AtvikModal({ open, onOpenChange }: AtvikModalProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="slagsmal">Slagsmál</SelectItem>
-                  <SelectItem value="vorubrogg">Vörubrögð</SelectItem>
+                  <SelectItem value="upptaka">Upptaka</SelectItem>
                   <SelectItem value="slysa">Slys</SelectItem>
                   <SelectItem value="flott">Flótti</SelectItem>
                   <SelectItem value="ofbeldi">Ofbeldi</SelectItem>

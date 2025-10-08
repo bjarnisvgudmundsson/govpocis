@@ -98,9 +98,9 @@ const mockIncidents: Incident[] = [
   {
     id: '2',
     timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-    type: 'Vörubrögð',
+    type: 'Upptaka',
     prisoners: ['3'],
-    description: 'Fannst bannað efni í klefa hjá Finnur Bjartsson',
+    description: 'Bannað efni fannst í klefa hjá Finni Bjartssyni',
     reporter: 'Guðný Ólafsdóttir',
     status: 'completed',
     severity: 'high'
@@ -333,5 +333,40 @@ export const prisonDataService = {
         progress: 100
       }
     ];
+  },
+
+  // Get detailed inmate data for modal
+  async getInmate(id: string) {
+    // Return realistic mock if no backend yet
+    const now = new Date().toLocaleString('is-IS');
+    const prisoner = mockPrisoners.find(p => p.id === id);
+    const name = prisoner ? prisoner.name : `Fangi ${id}`;
+    const cell = prisoner ? prisoner.cell : 'B07';
+    const unit = prisoner ? prisoner.ward : 'B-Álma';
+    const status = prisoner?.status === 'normal' ? 'Venjulegt' :
+                   prisoner?.status === 'isolation' ? 'Einangrun' :
+                   prisoner?.status === 'medical' ? 'Læknishjálp' : 'Venjulegt';
+
+    return {
+      id,
+      name,
+      cell,
+      unit,
+      status,
+      caseOfficer: 'Guðrún Ó.',
+      updatedAt: now,
+      incidents: [
+        { id:'i1', time:'09:25', title:'Létt atvik', summary:'Smávægileg ágreiningur í matsal.' }
+      ],
+      actions: [
+        { id:'a1', time:'10:10', title:'Flutningur', detail:'Fluttur í klefa B07 eftir viðtal.' }
+      ],
+      notes: [
+        { id:'n1', author:'Yfirvörður', title:'Athugasemd', text:'Sýnir góða framkomu.' }
+      ],
+      health: [
+        { id:'h1', type:'Lyf', title:'Svefnlyf', note:'Gefið kl. 22:00' }
+      ]
+    };
   }
 };

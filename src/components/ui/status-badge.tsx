@@ -5,33 +5,29 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const statusStyles: Record<string, string> = {
-  // Using clean status colors: green for success, red for error/issues, yellow for warnings/pending
-  'LOKIÐ': 'bg-success text-success-foreground', // Completed - green
-  'PENDING': 'bg-success text-success-foreground', // Pending approval - green
-  'VIRKT': 'bg-primary text-primary-foreground', // Active - primary accent
-  
-  'VANSKIL': 'bg-destructive text-destructive-foreground', // Issues - red
-  
-  'TIL SKOÐUNAR': 'bg-warning text-warning-foreground', // Under review - yellow
-  'EINDAGI Í DAG': 'bg-warning text-warning-foreground', // Due today - yellow
-  'DRÖG': 'bg-warning text-warning-foreground', // Draft - yellow
-  'Í BIÐ': 'bg-warning text-warning-foreground', // Waiting - yellow
-  'Í VINNSLU': 'bg-warning text-warning-foreground', // In progress - yellow
-  'Í YFIRLESTRI': 'bg-warning text-warning-foreground', // In review - yellow
-  'BÍÐUR SAMÞYKKIS': 'bg-warning text-warning-foreground', // Awaiting approval - yellow
-  
-  // Neutral states use muted colors
-  'VÆNTANLEGT': 'bg-muted text-muted-foreground border border-border', // Expected - muted
-  'NÝTT': 'bg-primary text-primary-foreground', // New - primary accent
-  'FÆRT Í SKJALASAFN': 'bg-muted text-muted-foreground border border-border', // Archived - muted
+type Status = 'Afgreitt' | 'Óafgreitt' | 'Áríðandi' | string;
+
+const palette: Record<string, string> = {
+  'Afgreitt':  'bg-emerald-100 text-emerald-800 border-emerald-300',
+  'Óafgreitt': 'bg-amber-100 text-amber-900 border-amber-300',
+  'Áríðandi':  'bg-red-100 text-red-800 border-red-300',
+
+  // Legacy status mapping for backwards compatibility
+  'LOKIÐ': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+  'PENDING': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+  'Í VINNSLU': 'bg-amber-100 text-amber-900 border-amber-300',
+  'VANSKIL': 'bg-red-100 text-red-800 border-red-300',
+  'TIL SKOÐUNAR': 'bg-amber-100 text-amber-900 border-amber-300',
+  'DRÖG': 'bg-amber-100 text-amber-900 border-amber-300',
+  'Í BIÐ': 'bg-amber-100 text-amber-900 border-amber-300',
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  const cls = palette[status] ?? 'bg-slate-100 text-slate-700 border-slate-300';
   return (
     <span className={cn(
-      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider', // Adjusted padding and tracking for better look
-      statusStyles[status.toUpperCase()] || 'bg-muted text-muted-foreground border border-border', // Default to muted, convert status to uppercase for matching
+      'inline-flex items-center rounded-md border px-2 py-0.5 text-[11px]',
+      cls,
       className
     )}>
       {status}
