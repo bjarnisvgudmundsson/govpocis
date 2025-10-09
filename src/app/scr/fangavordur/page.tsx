@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,45 +71,37 @@ export default function FangavordurPage() {
           <h1 className="text-3xl font-bold font-headline">Vaktabók</h1>
           <p className="text-muted-foreground">{currentDate}</p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
           {/* Action Buttons */}
-          <Button 
+          <Button
             onClick={() => setInkomOpen(true)}
             size="sm"
-            className="bg-success hover:bg-success/90 text-success-foreground"
+            className="bg-success hover:bg-success/90 text-success-foreground px-2.5"
           >
             Nýr fangi
           </Button>
-          <Button 
+          <Button
             onClick={() => setAtvikOpen(true)}
             size="sm"
-            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground px-2.5"
           >
             Skrá atvik
           </Button>
-          <Button 
+          <Button
             onClick={() => setAdgerdOpen(true)}
             size="sm"
-            className="bg-warning hover:bg-warning/90 text-warning-foreground"
+            className="bg-warning hover:bg-warning/90 text-warning-foreground px-2.5"
           >
             Skrá aðgerð
           </Button>
-          <Button 
+          <Button
             onClick={() => setDagbokarOpen(true)}
             size="sm"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-2.5"
           >
             Dagbókarfærsla
           </Button>
-          <Button 
-            onClick={() => setVaktskyrslаOpen(true)}
-            size="sm"
-            className="bg-muted hover:bg-muted/90 text-muted-foreground border"
-            variant="outline"
-          >
-            Vaktskýrsla
-          </Button>
-          
+
           {/* Search */}
           <div className="w-64">
             <Input
@@ -118,6 +111,24 @@ export default function FangavordurPage() {
               size="sm"
             />
           </div>
+
+          <Button
+            size="sm"
+            className="px-2.5"
+            variant="secondary"
+            asChild
+          >
+            <Link href="/scr/skyrslur">Viðburðir</Link>
+          </Button>
+
+          <Button
+            onClick={() => setVaktskyrslаOpen(true)}
+            size="sm"
+            className="bg-muted hover:bg-muted/90 text-muted-foreground border px-2.5"
+            variant="outline"
+          >
+            Vaktskýrsla
+          </Button>
         </div>
       </div>
 
