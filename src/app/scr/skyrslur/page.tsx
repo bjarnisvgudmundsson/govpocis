@@ -62,7 +62,7 @@ const REJECTIONS_BY_MONTH: Record<MonthKey, number> = {
 };
 
 // ---------- Monthly grid (Sep) ----------
-type Status = '' | 'A' | 'R' | 'M' | 'O' | 'E'; // Performed, Rejected, Missed, Offered, Excused
+type Status = '' | 'F' | 'H' | 'M' | 'B' | 'U'; // Framkvæmt, Hafnað, Mætti ekki, Boðið, Undanþeginn
 const MONTH_DAYS = 30;
 const MONTH_ROWS = ['Sálfræðiviðtal','Nám','Vinnuskylda','Heimsókn','Símtöl'] as const;
 
@@ -72,11 +72,11 @@ function genMonthlyRow(seed: number): Status[] {
   const rand = () => (r = (r * 1103515245 + 12345) % 2**31) / 2**31;
   return Array.from({length: MONTH_DAYS}, () => {
     const p = rand();
-    if (p < 0.16) return 'A';
-    if (p < 0.22) return 'R';
+    if (p < 0.16) return 'F';
+    if (p < 0.22) return 'H';
     if (p < 0.28) return 'M';
-    if (p < 0.34) return 'O';
-    if (p < 0.37) return 'E';
+    if (p < 0.34) return 'B';
+    if (p < 0.37) return 'U';
     return '';
   });
 }
@@ -90,19 +90,19 @@ const MONTHLY_DATA: Record<typeof MONTH_ROWS[number], Status[]> = {
 };
 
 const statusLabel: Record<Exclude<Status, ''>, string> = {
-  A: 'Framkvæmt', R: 'Hafnað', M: 'Mætti ekki', O: 'Boðið', E: 'Undanþeginn'
+  F: 'Framkvæmt', H: 'Hafnað', M: 'Mætti ekki', B: 'Boðið', U: 'Undanþeginn'
 };
 
 // ---------- Weekly (chips) ----------
 type WeekRow = { d: string; t: string; cat: string; act: string; desc: string; st: Exclude<Status, ''> };
 const WEEK_ROWS: WeekRow[] = [
-  { d:'8. sep', t:'09:00', cat:'Vinna',      act:'Vinnuskylda í trésmíði', desc:'Vinnudagur samkvæmt áætlun.', st:'A' },
-  { d:'8. sep', t:'14:00', cat:'Nám',        act:'Íslenskukennsla',        desc:'Mætti á réttum tíma og tók virkan þátt.', st:'A' },
-  { d:'9. sep', t:'10:15', cat:'Beiðni',     act:'Beiðni um læknisþjónustu',desc:'Óskaði eftir lækni vegna vægra einkenna.', st:'O' },
-  { d:'10. sep',t:'11:00', cat:'Meðferð',    act:'Sálfræðiviðtal',         desc:'Bókað viðtal.', st:'A' },
-  { d:'11. sep',t:'09:00', cat:'Heilbrigði', act:'Læknisheimsókn',         desc:'Hitti lækni.', st:'E' },
-  { d:'12. sep',t:'13:00', cat:'Vinna',      act:'Ræsting á deild',        desc:'Föstudagsþrif.', st:'A' },
-  { d:'14. sep',t:'10:00', cat:'Fjölskylda', act:'Heimsókn',               desc:'Fjölskylduheimsókn.', st:'R' },
+  { d:'8. sep', t:'09:00', cat:'Vinna',      act:'Vinnuskylda í trésmíði', desc:'Vinnudagur samkvæmt áætlun.', st:'F' },
+  { d:'8. sep', t:'14:00', cat:'Nám',        act:'Íslenskukennsla',        desc:'Mætti á réttum tíma og tók virkan þátt.', st:'F' },
+  { d:'9. sep', t:'10:15', cat:'Beiðni',     act:'Beiðni um læknisþjónustu',desc:'Óskaði eftir lækni vegna vægra einkenna.', st:'B' },
+  { d:'10. sep',t:'11:00', cat:'Meðferð',    act:'Sálfræðiviðtal',         desc:'Bókað viðtal.', st:'F' },
+  { d:'11. sep',t:'09:00', cat:'Heilbrigði', act:'Læknisheimsókn',         desc:'Hitti lækni.', st:'U' },
+  { d:'12. sep',t:'13:00', cat:'Vinna',      act:'Ræsting á deild',        desc:'Föstudagsþrif.', st:'F' },
+  { d:'14. sep',t:'10:00', cat:'Fjölskylda', act:'Heimsókn',               desc:'Fjölskylduheimsókn.', st:'H' },
 ];
 
 // ---------- UI bits ----------
@@ -124,15 +124,33 @@ function Pill({ color, children }: { color: 'green'|'red'|'amber'|'blue'|'gray';
 
 function StatusToken({ s }: { s: Status }) {
   if (!s) return <span className="inline-block w-4 h-[18px]" />;
-  const map: Record<Exclude<Status, ''>, string> = {
-    A:'bg-emerald-600 text-white',
-    R:'bg-red-600 text-white',
-    M:'bg-amber-500 text-black',
-    O:'bg-blue-600 text-white',
-    E:'bg-gray-400 text-black',
+
+  // Colors per Icelandic status
+  const color: Record<Exclude<Status, ''>, string> = {
+    F: 'bg-emerald-600 text-white',  // Framkvæmt
+    H: 'bg-red-600 text-white',      // Hafnað
+    M: 'bg-amber-500 text-black',    // Mætti ekki
+    B: 'bg-blue-600 text-white',     // Boðið
+    U: 'bg-gray-400 text-black',     // Undanþeginn
   };
+
+  // Tooltip / accessibility labels
+  const labels: Record<Exclude<Status, ''>, string> = {
+    F: 'Framkvæmt',
+    H: 'Hafnað',
+    M: 'Mætti ekki',
+    B: 'Boðið',
+    U: 'Undanþeginn',
+  };
+
   return (
-    <span className={`inline-flex items-center justify-center w-[18px] h-[18px] rounded-md text-[11px] font-semibold ${map[s]}`}>{s}</span>
+    <span
+      className={`inline-flex items-center justify-center w-[20px] h-[20px] rounded-md text-[12px] font-semibold ${color[s]}`}
+      title={labels[s]}
+      aria-label={labels[s]}
+    >
+      {s}
+    </span>
   );
 }
 
@@ -209,23 +227,23 @@ function MonthGrid() {
 function MonthSummaries() {
   const lines = MONTH_ROWS.map(label => {
     const statuses = MONTHLY_DATA[label];
-    const A = statuses.filter(s=>s==='A').length;
-    const R = statuses.filter(s=>s==='R').length;
+    const F = statuses.filter(s=>s==='F').length;
+    const H = statuses.filter(s=>s==='H').length;
     const M = statuses.filter(s=>s==='M').length;
-    const O = statuses.filter(s=>s==='O').length;
-    const E = statuses.filter(s=>s==='E').length;
-    return { label, A, R, M, O, E };
+    const B = statuses.filter(s=>s==='B').length;
+    const U = statuses.filter(s=>s==='U').length;
+    return { label, F, H, M, B, U };
   });
   return (
     <div className="mt-3 border-t pt-2">
-      {lines.map(({label,A,R,M,O,E})=>(
+      {lines.map(({label,F,H,M,B,U})=>(
         <div key={label} className="text-sm my-1">
           <span className="font-medium">{label}:</span>{' '}
-          <span className="text-emerald-700">Framkvæmt {A}</span>{' • '}
-          <span className="text-red-700">Hafnað {R}</span>{' • '}
+          <span className="text-emerald-700">Framkvæmt {F}</span>{' • '}
+          <span className="text-red-700">Hafnað {H}</span>{' • '}
           <span className="text-amber-700">Mætti ekki {M}</span>{' • '}
-          <span className="text-blue-700">Boðið {O}</span>{' • '}
-          <span className="text-gray-700">Undanþeginn {E}</span>
+          <span className="text-blue-700">Boðið {B}</span>{' • '}
+          <span className="text-gray-700">Undanþeginn {U}</span>
         </div>
       ))}
     </div>
@@ -234,20 +252,20 @@ function MonthSummaries() {
 
 function WeekTable() {
   const totals = {
-    A: WEEK_ROWS.filter(r=>r.st==='A').length,
-    R: WEEK_ROWS.filter(r=>r.st==='R').length,
+    F: WEEK_ROWS.filter(r=>r.st==='F').length,
+    H: WEEK_ROWS.filter(r=>r.st==='H').length,
     M: WEEK_ROWS.filter(r=>r.st==='M').length,
-    O: WEEK_ROWS.filter(r=>r.st==='O').length,
-    E: WEEK_ROWS.filter(r=>r.st==='E').length,
+    B: WEEK_ROWS.filter(r=>r.st==='B').length,
+    U: WEEK_ROWS.filter(r=>r.st==='U').length,
   };
   return (
     <>
       <div className="flex flex-wrap gap-2 mb-2">
-        <Pill color="red">Hafnað: {totals.R}</Pill>
-        <Pill color="green">Framkvæmt: {totals.A}</Pill>
+        <Pill color="red">Hafnað: {totals.H}</Pill>
+        <Pill color="green">Framkvæmt: {totals.F}</Pill>
         <Pill color="amber">Mætti ekki: {totals.M}</Pill>
-        <Pill color="blue">Boðið: {totals.O}</Pill>
-        <Pill color="gray">Undanþeginn: {totals.E}</Pill>
+        <Pill color="blue">Boðið: {totals.B}</Pill>
+        <Pill color="gray">Undanþeginn: {totals.U}</Pill>
       </div>
       <div className="overflow-auto rounded-md border">
         <table className="w-full text-sm">
@@ -271,10 +289,10 @@ function WeekTable() {
                 <td className="p-2">{r.desc}</td>
                 <td className="p-2">
                   <span className={
-                    r.st==='A' ? 'bg-emerald-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
-                    r.st==='R' ? 'bg-red-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
+                    r.st==='F' ? 'bg-emerald-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
+                    r.st==='H' ? 'bg-red-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
                     r.st==='M' ? 'bg-amber-500 text-black px-2 py-0.5 rounded-full text-xs font-semibold' :
-                    r.st==='O' ? 'bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
+                    r.st==='B' ? 'bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-semibold' :
                                  'bg-gray-400 text-black px-2 py-0.5 rounded-full text-xs font-semibold'
                   }>
                     {statusLabel[r.st]}
@@ -348,11 +366,11 @@ export default function SkyrslurPage() {
         <CardHeader>
           <CardTitle>2. Mánaðaryfirlit: september 2025</CardTitle>
           <div className="flex flex-wrap gap-2">
-            <Pill color="green">Framkvæmt (A)</Pill>
-            <Pill color="red">Hafnað (R)</Pill>
+            <Pill color="green">Framkvæmt (F)</Pill>
+            <Pill color="red">Hafnað (H)</Pill>
             <Pill color="amber">Mætti ekki (M)</Pill>
-            <Pill color="blue">Boðið (O)</Pill>
-            <Pill color="gray">Undanþeginn (E)</Pill>
+            <Pill color="blue">Boðið (B)</Pill>
+            <Pill color="gray">Undanþeginn (U)</Pill>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
