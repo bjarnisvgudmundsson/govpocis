@@ -239,6 +239,374 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Hreyfing: Sjóntaugasjúkdómur (létt verkefni)',
       medical: { allergies: '—', meds: 'Augndropar', risks: '—' },
       photoUrl: ''
+    },
+    {
+      id: 'p-013',
+      prisonerNumber: '5311-013',
+      kennitala: '110181-9999',
+      name: 'Ásgeir Björnsson',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Karladeild',
+      cell: '5311',
+      lawyer: 'Bryndís Rós',
+      lawyerPhone: '661-2233',
+      status: 'Afplánun',
+      notes: 'Ofnæmi: Þrýstingsmötun',
+      medical: { allergies: 'Þrýstingsmötun', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-014',
+      prisonerNumber: '5306-015',
+      kennitala: '250292-1122',
+      name: 'Elín Margrét',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Kvennadeild',
+      cell: '5306',
+      lawyer: 'Sigurður Páll',
+      lawyerPhone: '772-3344',
+      status: 'Gæsluvarðhald',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-015',
+      prisonerNumber: '5320-016',
+      kennitala: '030385-2233',
+      name: 'Haukur Freyr',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Karladeild',
+      cell: '5320',
+      lawyer: 'Guðrún Elfa',
+      lawyerPhone: '690-4455',
+      status: 'Afplánun',
+      notes: 'Læknistími: Mánudagar',
+      medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-016',
+      prisonerNumber: '5313-018',
+      kennitala: '171186-3344',
+      name: 'Birna Sól',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Kvennadeild',
+      cell: '5313',
+      lawyer: 'Jóhann Kári',
+      lawyerPhone: '661-5566',
+      status: 'Gæsluvarðhald',
+      notes: 'Tungumál: PL/IS',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-017',
+      prisonerNumber: '5309-020',
+      kennitala: '280478-4455',
+      name: 'Kristján Már',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Karladeild',
+      cell: '5309',
+      lawyer: 'Rakel Sigurbjörg',
+      lawyerPhone: '775-6677',
+      status: 'Afplánun',
+      notes: 'Sértækur fæðumatur – glútenaleysi',
+      medical: { allergies: 'Glúten', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-018',
+      prisonerNumber: '5321-022',
+      kennitala: '190591-5566',
+      name: 'Svanhildur Erna',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Kvennadeild',
+      cell: '5321',
+      lawyer: 'Egill Þórsson',
+      lawyerPhone: '780-7788',
+      status: 'Gæsluvarðhald',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-019',
+      prisonerNumber: '5315-024',
+      kennitala: '051283-6677',
+      name: 'Fannar Örn',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Karladeild',
+      cell: '5315',
+      lawyer: 'Steinunn Vala',
+      lawyerPhone: '662-8899',
+      status: 'Afplánun',
+      notes: 'Astmi – loftrými nauðsynlegt',
+      medical: { allergies: '—', meds: 'Andblæstrartæki', risks: 'Andnauð' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-020',
+      prisonerNumber: '5303-026',
+      kennitala: '121189-7788',
+      name: 'Hanna Björk',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Kvennadeild',
+      cell: '5303',
+      lawyer: 'Baldur Óskarsson',
+      lawyerPhone: '771-9900',
+      status: 'Gæsluvarðhald',
+      notes: 'Ofnæmi: Mjólk',
+      medical: { allergies: 'Mjólkurafurðir', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-021',
+      prisonerNumber: '5322-028',
+      kennitala: '220676-8899',
+      name: 'Oddur Stefán',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Karladeild',
+      cell: '5322',
+      lawyer: 'Ólöf María',
+      lawyerPhone: '690-1122',
+      status: 'Afplánun',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-022',
+      prisonerNumber: '5317-030',
+      kennitala: '080494-9900',
+      name: 'Þóra Katrín',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Kvennadeild',
+      cell: '5317',
+      lawyer: 'Kristinn Baldur',
+      lawyerPhone: '661-2244',
+      status: 'Gæsluvarðhald',
+      notes: 'Geðræn meðferð – samráð við sálfræðing',
+      medical: { allergies: '—', meds: 'Þunglyndislyf', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-023',
+      prisonerNumber: '5304-032',
+      kennitala: '150582-0011',
+      name: 'Magnús Örn',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Karladeild',
+      cell: '5304',
+      lawyer: 'Sólveig Anna',
+      lawyerPhone: '772-3355',
+      status: 'Afplánun',
+      notes: 'Hjartasjúkdómur – regluleg eftirlit',
+      medical: { allergies: '—', meds: 'Hjartamagnýl', risks: 'Hjartabilun' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-024',
+      prisonerNumber: '5323-034',
+      kennitala: '301287-1122',
+      name: 'Íris Sif',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Kvennadeild',
+      cell: '5323',
+      lawyer: 'Árni Þór',
+      lawyerPhone: '780-4466',
+      status: 'Gæsluvarðhald',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-025',
+      prisonerNumber: '5320-036',
+      kennitala: '180773-2233',
+      name: 'Gunnar Atli',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Karladeild',
+      cell: '5320',
+      lawyer: 'Hrefna Lind',
+      lawyerPhone: '662-5577',
+      status: 'Afplánun',
+      notes: 'Sértækur fæðumatur – Halal',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-026',
+      prisonerNumber: '5308-038',
+      kennitala: '070690-3344',
+      name: 'Drífa Helga',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Kvennadeild',
+      cell: '5308',
+      lawyer: 'Þorsteinn Einar',
+      lawyerPhone: '775-6688',
+      status: 'Gæsluvarðhald',
+      notes: 'Ofnæmi: Penicillín',
+      medical: { allergies: 'Penicillín', meds: '—', risks: 'Ofnæmislost' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-027',
+      prisonerNumber: '5324-040',
+      kennitala: '240884-4455',
+      name: 'Sindri Ágúst',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Karladeild',
+      cell: '5324',
+      lawyer: 'Sigríður Björg',
+      lawyerPhone: '690-7799',
+      status: 'Afplánun',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-028',
+      prisonerNumber: '5321-042',
+      kennitala: '160379-5566',
+      name: 'Valgerður Ósk',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Kvennadeild',
+      cell: '5321',
+      lawyer: 'Friðrik Már',
+      lawyerPhone: '661-8800',
+      status: 'Gæsluvarðhald',
+      notes: 'Epilepsía – forðast strjúk ljós',
+      medical: { allergies: '—', meds: 'Flogaveikilyf', risks: 'Flog' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-029',
+      prisonerNumber: '5305-044',
+      kennitala: '090192-6677',
+      name: 'Einar Þór',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Karladeild',
+      cell: '5305',
+      lawyer: 'Kolbrún Lilja',
+      lawyerPhone: '772-9911',
+      status: 'Afplánun',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-030',
+      prisonerNumber: '5325-046',
+      kennitala: '040586-7788',
+      name: 'Sigrún Elísabet',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Kvennadeild',
+      cell: '5325',
+      lawyer: 'Ásgeir Hauksson',
+      lawyerPhone: '780-0022',
+      status: 'Gæsluvarðhald',
+      notes: 'Tungumál: RO/IS',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-031',
+      prisonerNumber: '5322-048',
+      kennitala: '211177-8899',
+      name: 'Ragnar Steinn',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Karladeild',
+      cell: '5322',
+      lawyer: 'Edda Rós',
+      lawyerPhone: '662-1133',
+      status: 'Afplánun',
+      notes: 'Hreyfihamlaður – aðgengisklef nauðsynlegur',
+      medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-032',
+      prisonerNumber: '5309-050',
+      kennitala: '130493-9900',
+      name: 'Anna Lilja',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Kvennadeild',
+      cell: '5309',
+      lawyer: 'Halldór Ragnar',
+      lawyerPhone: '775-2244',
+      status: 'Gæsluvarðhald',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-033',
+      prisonerNumber: '5326-052',
+      kennitala: '270281-0011',
+      name: 'Kristófer Jón',
+      prisonId: 'akureyri',
+      prisonName: 'Fangelsið á Akureyri',
+      department: 'Karladeild',
+      cell: '5326',
+      lawyer: 'Birna Lind',
+      lawyerPhone: '690-3355',
+      status: 'Afplánun',
+      notes: 'Ofnæmi: Eggjahvíta',
+      medical: { allergies: 'Egg', meds: '—', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-034',
+      prisonerNumber: '5323-054',
+      kennitala: '191288-1122',
+      name: 'Elísabet Sara',
+      prisonId: 'holmsheidi',
+      prisonName: 'Hólmsheiði',
+      department: 'Kvennadeild',
+      cell: '5323',
+      lawyer: 'Þórður Örn',
+      lawyerPhone: '661-4466',
+      status: 'Gæsluvarðhald',
+      notes: 'Þungun – fylgst reglulega með',
+      medical: { allergies: '—', meds: 'Fólínsýra', risks: '—' },
+      photoUrl: ''
+    },
+    {
+      id: 'p-035',
+      prisonerNumber: '5310-056',
+      kennitala: '060374-2233',
+      name: 'Börkur Hrafn',
+      prisonId: 'litla-hraun',
+      prisonName: 'Litla-Hraun',
+      department: 'Karladeild',
+      cell: '5310',
+      lawyer: 'Vilborg Anna',
+      lawyerPhone: '772-5577',
+      status: 'Afplánun',
+      notes: '—',
+      medical: { allergies: '—', meds: '—', risks: '—' },
+      photoUrl: ''
     }
   ];
 
@@ -582,18 +950,17 @@ export default function StjoriPage() {
             <div className="text-center py-8 text-muted-foreground">Hleður…</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-xs md:text-sm leading-tight">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-3 font-medium">Nafn fanga</th>
-                    <th className="text-left p-3 font-medium">Fanganúmer</th>
-                    <th className="text-left p-3 font-medium">Kennitala</th>
-                    <th className="text-left p-3 font-medium">Fangelsi</th>
-                    <th className="text-left p-3 font-medium">Deild</th>
-                    <th className="text-left p-3 font-medium">Klefi</th>
-                    <th className="text-left p-3 font-medium">Lögmaður</th>
-                    <th className="text-left p-3 font-medium">Staða</th>
-                    <th className="text-left p-3 font-medium">Athugasemdir</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Nafn fanga</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Fanganúmer</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Kennitala</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Fangelsi</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Klefi</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Lögmaður</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Staða</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Athugasemdir</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -603,7 +970,7 @@ export default function StjoriPage() {
                       className="border-b hover:bg-muted/50 cursor-pointer"
                       onClick={() => setSelected(p)}
                     >
-                      <td className="p-3">
+                      <td className="p-1.5 md:p-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
                             <AvatarImage src={p.photoUrl} alt={p.name} />
@@ -612,18 +979,17 @@ export default function StjoriPage() {
                           <span className="font-medium">{p.name}</span>
                         </div>
                       </td>
-                      <td className="p-3 text-sm">{p.prisonerNumber}</td>
-                      <td className="p-3 text-sm">{p.kennitala}</td>
-                      <td className="p-3 text-sm">{p.prisonName}</td>
-                      <td className="p-3 text-sm">{p.department}</td>
-                      <td className="p-3 text-sm">{p.cell}</td>
-                      <td className="p-3 text-sm">{p.lawyer}</td>
-                      <td className="p-3 text-sm">
+                      <td className="p-1.5 md:p-2 whitespace-nowrap">{p.prisonerNumber}</td>
+                      <td className="p-1.5 md:p-2 whitespace-nowrap">{p.kennitala}</td>
+                      <td className="p-1.5 md:p-2">{p.prisonName}</td>
+                      <td className="p-1.5 md:p-2">{p.cell}</td>
+                      <td className="p-1.5 md:p-2">{p.lawyer}</td>
+                      <td className="p-1.5 md:p-2">
                         <Badge variant={p.status === 'Afplánun' ? 'default' : 'secondary'}>
                           {p.status}
                         </Badge>
                       </td>
-                      <td className="p-3 text-sm">{p.notes ?? '—'}</td>
+                      <td className="p-1.5 md:p-2">{p.notes ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>
