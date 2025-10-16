@@ -9,7 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "make:placeholders": "ts-node --transpile-only scripts/make-placeholders.ts",
+    "gen:faces": "ts-node --transpile-only scripts/generate-synthetic-faces.ts"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.8.0",
@@ -54,6 +56,7 @@
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "use-sync-external-store": "^1.6.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -64,6 +67,7 @@
     "genkit-cli": "^1.8.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

@@ -19,6 +19,8 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+import photoMap from '@/app/data/prisonerPhotos.json';
+
 /* ----------------------------- New local types ----------------------------- */
 
 type CustodyStatus = 'Gæsluvarðhald' | 'Afplánun';
@@ -42,6 +44,7 @@ type Prisoner = {
     risks?: string;
   };
   photoUrl?: string;         // Optional portrait
+  syntheticPhoto?: boolean;  // Indicates if photo is AI-generated
 };
 
 /* --------------------- Mock data + service shim (safe) --------------------- */
@@ -656,7 +659,20 @@ export default function StjoriPage() {
       try {
         // Swap to: const rows = await prisonDataService.getPrisoners();
         const rows = await getMockPrisoners();
-        setPrisoners(rows);
+
+        // Map synthetic photos from photoMap
+        const withPhotos = rows.map(p => {
+          const mapped = (photoMap as Record<string,string>)[p.id];
+          const base = process.env.NEXT_PUBLIC_PHOTO_BASE ?? '';
+          const url = mapped ? `${base}${mapped}` : undefined;
+          return {
+            ...p,
+            photoUrl: url || p.photoUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p.name)}`,
+            syntheticPhoto: Boolean(mapped)
+          };
+        });
+
+        setPrisoners(withPhotos);
       } catch (e) {
         console.error('Failed to load prisoners:', e);
       } finally {
@@ -973,7 +989,10 @@ export default function StjoriPage() {
                       <td className="p-1.5 md:p-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={p.photoUrl} alt={p.name} />
+                            <AvatarImage
+                              src={p.photoUrl}
+                              alt={p.syntheticPhoto ? `Gervimynd af ${p.name} (ekki raunveruleg manneskja)` : p.name}
+                            />
                             <AvatarFallback>{p.name.split(' ').map(s => s[0]).join('').slice(0,2)}</AvatarFallback>
                           </Avatar>
                           <span className="font-medium">{p.name}</span>
@@ -1015,11 +1034,22 @@ export default function StjoriPage() {
               <div className="flex gap-6">
                 <div className="shrink-0">
                   <Avatar className="h-24 w-24 rounded-xl">
-                    <AvatarImage src={selected.photoUrl} alt={selected.name} />
+                    <AvatarImage
+                      src={selected.photoUrl}
+                      alt={selected.syntheticPhoto ? `Gervimynd af ${selected.name} (ekki raunveruleg manneskja)` : selected.name}
+                    />
                     <AvatarFallback className="text-xl">
                       {selected.name.split(' ').map(s => s[0]).join('').slice(0,2)}
                     </AvatarFallback>
                   </Avatar>
+                  {selected.syntheticPhoto && (
+                    <span
+                      className="mt-2 inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] text-muted-foreground"
+                      title="Myndin er gervigreind og sýnir ekki raunverulega manneskju."
+                    >
+                      Gervimynd (AI)
+                    </span>
+                  )}
                 </div>
 
                 <ScrollArea className="h-[320px] w-full pr-4">
