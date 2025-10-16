@@ -991,7 +991,7 @@ export default function StjoriPage() {
                           <Avatar className="h-6 w-6">
                             <AvatarImage
                               src={p.photoUrl}
-                              alt={p.syntheticPhoto ? `Gervimynd af ${p.name} (ekki raunveruleg manneskja)` : p.name}
+                              alt={`Prófílmynd af ${p.name}`}
                             />
                             <AvatarFallback>{p.name.split(' ').map(s => s[0]).join('').slice(0,2)}</AvatarFallback>
                           </Avatar>
@@ -1036,20 +1036,12 @@ export default function StjoriPage() {
                   <Avatar className="h-24 w-24 rounded-xl">
                     <AvatarImage
                       src={selected.photoUrl}
-                      alt={selected.syntheticPhoto ? `Gervimynd af ${selected.name} (ekki raunveruleg manneskja)` : selected.name}
+                      alt={`Prófílmynd af ${selected.name}`}
                     />
                     <AvatarFallback className="text-xl">
                       {selected.name.split(' ').map(s => s[0]).join('').slice(0,2)}
                     </AvatarFallback>
                   </Avatar>
-                  {selected.syntheticPhoto && (
-                    <span
-                      className="mt-2 inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] text-muted-foreground"
-                      title="Myndin er gervigreind og sýnir ekki raunverulega manneskju."
-                    >
-                      Gervimynd (AI)
-                    </span>
-                  )}
                 </div>
 
                 <ScrollArea className="h-[320px] w-full pr-4">
