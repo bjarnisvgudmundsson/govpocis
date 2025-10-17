@@ -45,6 +45,7 @@ type Prisoner = {
   };
   photoUrl?: string;         // Optional portrait
   syntheticPhoto?: boolean;  // Indicates if photo is AI-generated
+  recentIncidents7d?: number; // Recent incidents in last 7 days (0-3+)
 };
 
 /* --------------------- Mock data + service shim (safe) --------------------- */
@@ -65,7 +66,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Ofnæmi fyrir fiski',
       medical: { allergies: 'Fiskur', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-002',
@@ -81,7 +83,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Bjallan bilað – hafið samband við verkstjóra',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-003',
@@ -97,7 +100,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Sjónvarp bilað / þrifur rækt',
       medical: { allergies: 'Ryk', meds: 'Antihistamín', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-004',
@@ -113,7 +117,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Viðkvæm fyrir lyktarefnum',
       medical: { allergies: 'Ilmefni', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 2
     },
     {
       id: 'p-005',
@@ -129,7 +134,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Sykursýki II',
       medical: { allergies: '—', meds: 'Metformin', risks: 'Blóðsykursföll' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-006',
@@ -145,7 +151,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Bið um læknistíma vikulega',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-007',
@@ -161,7 +168,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Ofnæmi: Hnetur',
       medical: { allergies: 'Hnetur', meds: 'Adrenalínpenni', risks: 'Ofnæmislost' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 3
     },
     {
       id: 'p-008',
@@ -177,7 +185,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Gleraugu brotin – pöntun í gangi',
       medical: { allergies: '—', meds: 'Blóðþrýstingslyf', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-009',
@@ -193,7 +202,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Tungumálastuðningur: EN/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-010',
@@ -209,7 +219,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Fæði: Grænmetisfæði',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-011',
@@ -225,7 +236,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Forðast sterk hljóð (heyrnartæki)',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 2
     },
     {
       id: 'p-012',
@@ -241,7 +253,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Hreyfing: Sjóntaugasjúkdómur (létt verkefni)',
       medical: { allergies: '—', meds: 'Augndropar', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-013',
@@ -257,7 +270,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Ofnæmi: Þrýstingsmötun',
       medical: { allergies: 'Þrýstingsmötun', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-014',
@@ -273,7 +287,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-015',
@@ -289,7 +304,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Læknistími: Mánudagar',
       medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-016',
@@ -305,7 +321,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Tungumál: PL/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-017',
@@ -321,7 +338,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Sértækur fæðumatur – glútenaleysi',
       medical: { allergies: 'Glúten', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 2
     },
     {
       id: 'p-018',
@@ -337,7 +355,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-019',
@@ -353,7 +372,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Astmi – loftrými nauðsynlegt',
       medical: { allergies: '—', meds: 'Andblæstrartæki', risks: 'Andnauð' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-020',
@@ -369,7 +389,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Ofnæmi: Mjólk',
       medical: { allergies: 'Mjólkurafurðir', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 3
     },
     {
       id: 'p-021',
@@ -385,7 +406,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-022',
@@ -401,7 +423,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Geðræn meðferð – samráð við sálfræðing',
       medical: { allergies: '—', meds: 'Þunglyndislyf', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-023',
@@ -417,7 +440,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Hjartasjúkdómur – regluleg eftirlit',
       medical: { allergies: '—', meds: 'Hjartamagnýl', risks: 'Hjartabilun' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-024',
@@ -433,7 +457,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 2
     },
     {
       id: 'p-025',
@@ -449,7 +474,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Sértækur fæðumatur – Halal',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-026',
@@ -465,7 +491,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Ofnæmi: Penicillín',
       medical: { allergies: 'Penicillín', meds: '—', risks: 'Ofnæmislost' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-027',
@@ -481,7 +508,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-028',
@@ -497,7 +525,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Epilepsía – forðast strjúk ljós',
       medical: { allergies: '—', meds: 'Flogaveikilyf', risks: 'Flog' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 3
     },
     {
       id: 'p-029',
@@ -513,7 +542,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-030',
@@ -529,7 +559,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Tungumál: RO/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-031',
@@ -545,7 +576,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Hreyfihamlaður – aðgengisklef nauðsynlegur',
       medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 2
     },
     {
       id: 'p-032',
@@ -561,7 +593,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-033',
@@ -577,7 +610,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: 'Ofnæmi: Eggjahvíta',
       medical: { allergies: 'Egg', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     },
     {
       id: 'p-034',
@@ -593,7 +627,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Gæsluvarðhald',
       notes: 'Þungun – fylgst reglulega með',
       medical: { allergies: '—', meds: 'Fólínsýra', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 1
     },
     {
       id: 'p-035',
@@ -609,7 +644,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       status: 'Afplánun',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
-      photoUrl: ''
+      photoUrl: '',
+      recentIncidents7d: 0
     }
   ];
 
@@ -620,6 +656,43 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
 }
 
 /* --------------------------------- Page ----------------------------------- */
+
+/* R/Y/G status dot */
+function Dot({ count }: { count: number}) {
+  const color = count === 0 ? 'bg-green-500' : count === 1 ? 'bg-yellow-500' : 'bg-red-500';
+  return <div className={`w-3 h-3 rounded-full ${color}`} title={`${count} atvik síðustu 7 daga`} />;
+}
+
+/* Sortable column header */
+type SortDirection = 'asc' | 'desc' | null;
+function SortHeader({
+  label,
+  sortKey,
+  currentSort,
+  currentDir,
+  onSort
+}: {
+  label: string;
+  sortKey: string;
+  currentSort: string | null;
+  currentDir: SortDirection;
+  onSort: (key: string) => void;
+}) {
+  const isActive = currentSort === sortKey;
+  return (
+    <th
+      className="text-left p-1.5 md:p-2 font-medium cursor-pointer hover:bg-muted/50 select-none"
+      onClick={() => onSort(sortKey)}
+    >
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        {isActive && (
+          <span className="text-xs">{currentDir === 'asc' ? '↑' : '↓'}</span>
+        )}
+      </div>
+    </th>
+  );
+}
 
 export default function StjoriPage() {
   const [facilities, setFacilities] = useState<Facility[]>([]);
@@ -638,6 +711,21 @@ export default function StjoriPage() {
 
   // New: selection / modal
   const [selected, setSelected] = useState<Prisoner | null>(null);
+
+  // Sorting state
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<SortDirection>(null);
+
+  const handleSort = (key: string) => {
+    if (sortBy === key) {
+      // Toggle direction: asc -> desc -> null
+      if (sortDir === 'asc') setSortDir('desc');
+      else if (sortDir === 'desc') { setSortBy(null); setSortDir(null); }
+    } else {
+      setSortBy(key);
+      setSortDir('asc');
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -684,7 +772,7 @@ export default function StjoriPage() {
 
   const filteredPrisoners = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return prisoners.filter(p => {
+    let filtered = prisoners.filter(p => {
       const matchesPrison = prisonFilter === 'all' || p.prisonId === prisonFilter;
       const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
       const matchesQuery =
@@ -694,7 +782,36 @@ export default function StjoriPage() {
         p.prisonerNumber.toLowerCase().includes(q);
       return matchesPrison && matchesStatus && matchesQuery;
     });
-  }, [prisoners, prisonFilter, statusFilter, query]);
+
+    // Apply sorting
+    if (sortBy && sortDir) {
+      filtered = [...filtered].sort((a, b) => {
+        let aVal: any;
+        let bVal: any;
+
+        if (sortBy === 'status') {
+          // Status dot: 0 (green) < 1 (yellow) < 2+ (red)
+          aVal = a.recentIncidents7d ?? 0;
+          bVal = b.recentIncidents7d ?? 0;
+        } else if (sortBy === 'name') {
+          aVal = a.name.toLowerCase();
+          bVal = b.name.toLowerCase();
+        } else if (sortBy === 'prison') {
+          aVal = a.prisonName.toLowerCase();
+          bVal = b.prisonName.toLowerCase();
+        } else if (sortBy === 'judicialStatus') {
+          aVal = a.status;
+          bVal = b.status;
+        }
+
+        if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [prisoners, prisonFilter, statusFilter, query, sortBy, sortDir]);
 
   const getUtilizationColor = (utilization: number) => {
     if (utilization >= 95) return 'bg-destructive';
@@ -748,9 +865,9 @@ export default function StjoriPage() {
 
       {/* Facility Overview */}
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Yfirlit Fangelsa</CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">
@@ -758,17 +875,17 @@ export default function StjoriPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm leading-tight">
+              <table className="w-full text-xs md:text-sm leading-tight">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-2 font-medium">Fangelsi</th>
-                    <th className="text-left p-2 font-medium">Fangar</th>
-                    <th className="text-left p-2 font-medium">Rými</th>
-                    <th className="text-left p-2 font-medium">Nýting</th>
-                    <th className="text-left p-2 font-medium">Starfsmenn</th>
-                    <th className="text-left p-2 font-medium">Atvik í dag</th>
-                    <th className="text-left p-2 font-medium">Vikuleg atvik</th>
-                    <th className="text-left p-2 font-medium">Staða</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Fangelsi</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Fangar</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Rými</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Nýting</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Starfsmenn</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Atvik í dag</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Vikuleg atvik</th>
+                    <th className="text-left p-1.5 md:p-2 font-medium">Staða</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -776,16 +893,16 @@ export default function StjoriPage() {
                     const utilization = Math.round((facility.prisoners / facility.capacity) * 100);
                     return (
                       <tr key={facility.id} className="border-b hover:bg-muted/50">
-                        <td className="p-2 font-medium text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 font-medium text-xs md:text-sm">
                           {facility.name}
                         </td>
-                        <td className="p-2 text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 text-xs md:text-sm">
                           {facility.prisoners}
                         </td>
-                        <td className="p-2 text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 text-xs md:text-sm">
                           {facility.capacity}
                         </td>
-                        <td className="p-2">
+                        <td className="p-1.5 md:p-2">
                           <div className="flex items-center space-x-2">
                             <div className="w-20">
                               <Progress
@@ -798,10 +915,10 @@ export default function StjoriPage() {
                             </span>
                           </div>
                         </td>
-                        <td className="p-2 text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 text-xs md:text-sm">
                           {facility.staff}
                         </td>
-                        <td className="p-2 text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 text-xs md:text-sm">
                           <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${
                             facility.todayIncidents === 0 ? 'bg-success text-success-foreground' :
                             facility.todayIncidents <= 2 ? 'bg-warning text-warning-foreground' :
@@ -810,7 +927,7 @@ export default function StjoriPage() {
                             {facility.todayIncidents}
                           </span>
                         </td>
-                        <td className="p-2 text-xs md:text-sm">
+                        <td className="p-1.5 md:p-2 text-xs md:text-sm">
                           <span className={`inline-flex items-center justify-center w-8 h-6 rounded-full text-xs font-medium ${
                             facility.weeklyIncidents <= 5 ? 'bg-success text-success-foreground' :
                             facility.weeklyIncidents <= 10 ? 'bg-warning text-warning-foreground' :
@@ -819,7 +936,7 @@ export default function StjoriPage() {
                             {facility.weeklyIncidents}
                           </span>
                         </td>
-                        <td className="p-2">
+                        <td className="p-1.5 md:p-2">
                           <StatusBadge status={getStatusVariant(facility.status)} />
                         </td>
                       </tr>
@@ -911,9 +1028,9 @@ export default function StjoriPage() {
 
       {/* ----------------------- Prisoner Directory (NEW) ---------------------- */}
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Fangar – Yfirlit</CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className="space-y-4">
           {/* Filters */}
           <div className="flex flex-col gap-3 md:flex-row md:items-end">
@@ -961,6 +1078,23 @@ export default function StjoriPage() {
             </Button>
           </div>
 
+          {/* Legend */}
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span className="font-medium">Staða (7 dagar):</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+              <span>Engin atvik</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <span>1 atvik</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <span>2+ atvik</span>
+            </div>
+          </div>
+
           {/* Table */}
           {loadingPrisoners ? (
             <div className="text-center py-8 text-muted-foreground">Hleður…</div>
@@ -969,13 +1103,38 @@ export default function StjoriPage() {
               <table className="w-full text-xs md:text-sm leading-tight">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-1.5 md:p-2 font-medium">Nafn fanga</th>
+                    <SortHeader
+                      label="●"
+                      sortKey="status"
+                      currentSort={sortBy}
+                      currentDir={sortDir}
+                      onSort={handleSort}
+                    />
+                    <SortHeader
+                      label="Nafn fanga"
+                      sortKey="name"
+                      currentSort={sortBy}
+                      currentDir={sortDir}
+                      onSort={handleSort}
+                    />
                     <th className="text-left p-1.5 md:p-2 font-medium">Fanganúmer</th>
                     <th className="text-left p-1.5 md:p-2 font-medium">Kennitala</th>
-                    <th className="text-left p-1.5 md:p-2 font-medium">Fangelsi</th>
+                    <SortHeader
+                      label="Fangelsi"
+                      sortKey="prison"
+                      currentSort={sortBy}
+                      currentDir={sortDir}
+                      onSort={handleSort}
+                    />
                     <th className="text-left p-1.5 md:p-2 font-medium">Klefi</th>
                     <th className="text-left p-1.5 md:p-2 font-medium">Lögmaður</th>
-                    <th className="text-left p-1.5 md:p-2 font-medium">Staða</th>
+                    <SortHeader
+                      label="Staða (dómst.)"
+                      sortKey="judicialStatus"
+                      currentSort={sortBy}
+                      currentDir={sortDir}
+                      onSort={handleSort}
+                    />
                     <th className="text-left p-1.5 md:p-2 font-medium">Athugasemdir</th>
                   </tr>
                 </thead>
@@ -986,6 +1145,11 @@ export default function StjoriPage() {
                       className="border-b hover:bg-muted/50 cursor-pointer"
                       onClick={() => setSelected(p)}
                     >
+                      <td className="p-1.5 md:p-2 text-center">
+                        <div className="flex items-center justify-center">
+                          <Dot count={p.recentIncidents7d ?? 0} />
+                        </div>
+                      </td>
                       <td className="p-1.5 md:p-2">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
@@ -1001,7 +1165,7 @@ export default function StjoriPage() {
                       <td className="p-1.5 md:p-2 whitespace-nowrap">{p.prisonerNumber}</td>
                       <td className="p-1.5 md:p-2 whitespace-nowrap">{p.kennitala}</td>
                       <td className="p-1.5 md:p-2">{p.prisonName}</td>
-                      <td className="p-1.5 md:p-2">{p.cell}</td>
+                      <td className="p-1.5 md:p-2 whitespace-nowrap">{p.cell}</td>
                       <td className="p-1.5 md:p-2">{p.lawyer}</td>
                       <td className="p-1.5 md:p-2">
                         <Badge variant={p.status === 'Afplánun' ? 'default' : 'secondary'}>
@@ -1060,6 +1224,23 @@ export default function StjoriPage() {
                     <Info label="Áhætta" value={selected.medical?.risks ?? '—'} />
                   </div>
                 </ScrollArea>
+              </div>
+
+              {/* Status Legend */}
+              <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
+                <span className="font-medium">Staða (7 dagar):</span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <span>Engin atvik</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <span>1 atvik</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <span>2+ atvik</span>
+                </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
