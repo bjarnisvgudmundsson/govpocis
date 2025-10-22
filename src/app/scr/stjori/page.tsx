@@ -6,6 +6,8 @@ import { Progress } from '@/components/ui/progress';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { StatCard } from '@/components/prison/stat-card';
 import { prisonDataService, type Facility } from '@/lib/prison-data';
+import { Phone, MessageSquareText, Mail } from 'lucide-react';
+import { toFacilityKey, canonicalFacilityLabel, FACILITY_DISPLAY, type FacilityKey } from '@/lib/facility';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -23,7 +25,8 @@ import photoMap from '@/app/data/prisonerPhotos.json';
 
 /* ----------------------------- New local types ----------------------------- */
 
-type CustodyStatus = 'Gæsluvarðhald' | 'Afplánun';
+type CustodyStatus = 'Gæsluvarðhald' | 'Afplánun' | 'Einangrun';
+type Kyn = 'Karlkyns' | 'Kvenkyns' | 'Kynsegin' | 'Annað';
 
 type Prisoner = {
   id: string;
@@ -32,10 +35,12 @@ type Prisoner = {
   name: string;
   prisonId: string;
   prisonName: string;
+  facilityKey: FacilityKey;  // Canonical facility key
   department: string;        // Deild
   cell: string;              // Klefi
   lawyer?: string;
   lawyerPhone?: string;
+  lawyerEmail?: string;
   status: CustodyStatus;     // Staða
   notes?: string;            // Athugasemdir
   medical?: {
@@ -46,7 +51,44 @@ type Prisoner = {
   photoUrl?: string;         // Optional portrait
   syntheticPhoto?: boolean;  // Indicates if photo is AI-generated
   recentIncidents7d?: number; // Recent incidents in last 7 days (0-3+)
+  kyn: Kyn;                  // Gender
 };
+
+/* -------------------------- Status color mapping -------------------------- */
+const STADA_STYLES: Record<string, string> = {
+  "Afplánun": "bg-blue-100 text-blue-800 ring-1 ring-blue-200",
+  "Gæsluvarðhald": "bg-yellow-100 text-yellow-800 ring-1 ring-yellow-200",
+  "Einangrun": "bg-red-100 text-red-800 ring-1 ring-red-200",
+};
+
+/* ---------------------------- Kyn inference ----------------------------- */
+// Common Icelandic given names by gender
+const KVENNАНАФN = new Set([
+  'vaka', 'lilja', 'ásta', 'rósa', 'sólveig', 'þórhildur', 'elín', 'birna',
+  'svanhildur', 'hanna', 'þóra', 'íris', 'drífa', 'valgerður', 'sigrún', 'elísabet'
+]);
+
+const KARLANÖFN = new Set([
+  'snorri', 'bjartur', 'gvendur', 'nonni', 'ágúst', 'guðmundur', 'ásgeir',
+  'haukur', 'kristján', 'fannar', 'oddur', 'magnús', 'gunnar', 'sindri',
+  'einar', 'ragnar', 'kristófer', 'börkur'
+]);
+
+function inferKynFromName(name: string): Kyn | undefined {
+  const parts = name.split(' ');
+  const lastName = parts[parts.length - 1]?.toLowerCase();
+  const firstName = parts[0]?.toLowerCase();
+
+  // Check patronymic/matronymic
+  if (lastName?.endsWith('dóttir')) return 'Kvenkyns';
+  if (lastName?.endsWith('son')) return 'Karlkyns';
+
+  // Check given name
+  if (firstName && KVENNАНАФN.has(firstName)) return 'Kvenkyns';
+  if (firstName && KARLANÖFN.has(firstName)) return 'Karlkyns';
+
+  return undefined;
+}
 
 /* --------------------- Mock data + service shim (safe) --------------------- */
 /* Replace this with prisonDataService.getPrisoners() when available. */
@@ -63,11 +105,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5301',
       lawyer: 'Leifur Runólfsson',
       lawyerPhone: '662-4600',
+      lawyerEmail: 'leifur@logmenn.is',
       status: 'Afplánun',
       notes: 'Ofnæmi fyrir fiski',
       medical: { allergies: 'Fiskur', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-002',
@@ -80,11 +124,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5308',
       lawyer: 'Vaka Dagsdóttir',
       lawyerPhone: '848-9608',
+      lawyerEmail: 'vaka@logmenn.is',
       status: 'Gæsluvarðhald',
       notes: 'Bjallan bilað – hafið samband við verkstjóra',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-003',
@@ -101,7 +147,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Sjónvarp bilað / þrifur rækt',
       medical: { allergies: 'Ryk', meds: 'Antihistamín', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-004',
@@ -114,11 +161,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5312',
       lawyer: 'Sverrir Arnarson',
       lawyerPhone: '771-1122',
+      lawyerEmail: 'sverrir@logmenn.is',
       status: 'Gæsluvarðhald',
       notes: 'Viðkvæm fyrir lyktarefnum',
       medical: { allergies: 'Ilmefni', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 2
+      recentIncidents7d: 2,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-005',
@@ -135,7 +184,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Sykursýki II',
       medical: { allergies: '—', meds: 'Metformin', risks: 'Blóðsykursföll' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-006',
@@ -148,11 +198,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5310',
       lawyer: 'Tinna Guðrún',
       lawyerPhone: '690-7788',
+      lawyerEmail: 'tinna@logmenn.is',
       status: 'Afplánun',
       notes: 'Bið um læknistíma vikulega',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-007',
@@ -165,11 +217,12 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5302',
       lawyer: 'Aron Gíslason',
       lawyerPhone: '661-9900',
-      status: 'Gæsluvarðhald',
+      status: 'Einangrun',
       notes: 'Ofnæmi: Hnetur',
       medical: { allergies: 'Hnetur', meds: 'Adrenalínpenni', risks: 'Ofnæmislost' },
       photoUrl: '',
-      recentIncidents7d: 3
+      recentIncidents7d: 3,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-008',
@@ -186,7 +239,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Gleraugu brotin – pöntun í gangi',
       medical: { allergies: '—', meds: 'Blóðþrýstingslyf', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-009',
@@ -199,11 +253,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5316',
       lawyer: 'Snorri Þráinsson',
       lawyerPhone: '775-8899',
+      lawyerEmail: 'snorri@logmenn.is',
       status: 'Gæsluvarðhald',
       notes: 'Tungumálastuðningur: EN/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-010',
@@ -220,7 +276,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Fæði: Grænmetisfæði',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-011',
@@ -237,7 +294,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Forðast sterk hljóð (heyrnartæki)',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 2
+      recentIncidents7d: 2,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-012',
@@ -254,7 +312,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Hreyfing: Sjóntaugasjúkdómur (létt verkefni)',
       medical: { allergies: '—', meds: 'Augndropar', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-013',
@@ -267,11 +326,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5311',
       lawyer: 'Bryndís Rós',
       lawyerPhone: '661-2233',
+      lawyerEmail: 'bryndis@logmenn.is',
       status: 'Afplánun',
       notes: 'Ofnæmi: Þrýstingsmötun',
       medical: { allergies: 'Þrýstingsmötun', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-014',
@@ -288,7 +349,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-015',
@@ -305,7 +367,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Læknistími: Mánudagar',
       medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-016',
@@ -322,7 +385,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Tungumál: PL/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Kynsegin'
     },
     {
       id: 'p-017',
@@ -335,11 +399,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5309',
       lawyer: 'Rakel Sigurbjörg',
       lawyerPhone: '775-6677',
+      lawyerEmail: 'rakel@logmenn.is',
       status: 'Afplánun',
       notes: 'Sértækur fæðumatur – glútenaleysi',
       medical: { allergies: 'Glúten', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 2
+      recentIncidents7d: 2,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-018',
@@ -356,7 +422,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-019',
@@ -373,7 +440,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Astmi – loftrými nauðsynlegt',
       medical: { allergies: '—', meds: 'Andblæstrartæki', risks: 'Andnauð' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-020',
@@ -386,11 +454,12 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5303',
       lawyer: 'Baldur Óskarsson',
       lawyerPhone: '771-9900',
-      status: 'Gæsluvarðhald',
+      status: 'Einangrun',
       notes: 'Ofnæmi: Mjólk',
       medical: { allergies: 'Mjólkurafurðir', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 3
+      recentIncidents7d: 3,
+      kyn: 'Kvenkyns'
     },
     {
       id: 'p-021',
@@ -407,7 +476,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-022',
@@ -420,11 +490,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5317',
       lawyer: 'Kristinn Baldur',
       lawyerPhone: '661-2244',
+      lawyerEmail: 'kristinn@logmenn.is',
       status: 'Gæsluvarðhald',
       notes: 'Geðræn meðferð – samráð við sálfræðing',
       medical: { allergies: '—', meds: 'Þunglyndislyf', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Annað'
     },
     {
       id: 'p-023',
@@ -441,7 +513,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Hjartasjúkdómur – regluleg eftirlit',
       medical: { allergies: '—', meds: 'Hjartamagnýl', risks: 'Hjartabilun' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-024',
@@ -458,7 +531,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 2
+      recentIncidents7d: 2,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-025',
@@ -475,7 +549,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Sértækur fæðumatur – Halal',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-026',
@@ -492,7 +567,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Ofnæmi: Penicillín',
       medical: { allergies: 'Penicillín', meds: '—', risks: 'Ofnæmislost' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-027',
@@ -505,11 +581,13 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5324',
       lawyer: 'Sigríður Björg',
       lawyerPhone: '690-7799',
+      lawyerEmail: 'sigridur@logmenn.is',
       status: 'Afplánun',
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-028',
@@ -522,11 +600,12 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       cell: '5321',
       lawyer: 'Friðrik Már',
       lawyerPhone: '661-8800',
-      status: 'Gæsluvarðhald',
+      status: 'Einangrun',
       notes: 'Epilepsía – forðast strjúk ljós',
       medical: { allergies: '—', meds: 'Flogaveikilyf', risks: 'Flog' },
       photoUrl: '',
-      recentIncidents7d: 3
+      recentIncidents7d: 3,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-029',
@@ -543,7 +622,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-030',
@@ -560,7 +640,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Tungumál: RO/IS',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-031',
@@ -577,7 +658,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Hreyfihamlaður – aðgengisklef nauðsynlegur',
       medical: { allergies: '—', meds: 'Verkjalyf', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 2
+      recentIncidents7d: 2,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-032',
@@ -594,7 +676,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-033',
@@ -611,7 +694,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Ofnæmi: Eggjahvíta',
       medical: { allergies: 'Egg', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-034',
@@ -628,7 +712,8 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: 'Þungun – fylgst reglulega með',
       medical: { allergies: '—', meds: 'Fólínsýra', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 1
+      recentIncidents7d: 1,
+      kyn: 'Karlkyns'
     },
     {
       id: 'p-035',
@@ -645,12 +730,14 @@ async function getMockPrisoners(): Promise<Prisoner[]> {
       notes: '—',
       medical: { allergies: '—', meds: '—', risks: '—' },
       photoUrl: '',
-      recentIncidents7d: 0
+      recentIncidents7d: 0,
+      kyn: 'Karlkyns'
     }
   ];
 
   return data.map(p => ({
     ...p,
+    facilityKey: toFacilityKey(p.prisonName),
     photoUrl: p.photoUrl || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p.name)}`
   }));
 }
@@ -705,8 +792,9 @@ export default function StjoriPage() {
   const [loadingPrisoners, setLoadingPrisoners] = useState(true);
 
   // New: filters
-  const [prisonFilter, setPrisonFilter] = useState<string>('all');
+  const [prisonFilter, setPrisonFilter] = useState<FacilityKey | 'Allt'>('Allt');
   const [statusFilter, setStatusFilter] = useState<'all' | CustodyStatus>('all');
+  const [kynFilter, setKynFilter] = useState<'all' | Kyn>('all');
   const [query, setQuery] = useState('');
 
   // New: selection / modal
@@ -773,14 +861,15 @@ export default function StjoriPage() {
   const filteredPrisoners = useMemo(() => {
     const q = query.trim().toLowerCase();
     let filtered = prisoners.filter(p => {
-      const matchesPrison = prisonFilter === 'all' || p.prisonId === prisonFilter;
+      const matchesPrison = prisonFilter === 'Allt' || p.facilityKey === prisonFilter;
       const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+      const matchesKyn = kynFilter === 'all' || p.kyn === kynFilter;
       const matchesQuery =
         q.length === 0 ||
         p.name.toLowerCase().includes(q) ||
         p.kennitala.replace('-', '').includes(q.replace('-', '')) ||
         p.prisonerNumber.toLowerCase().includes(q);
-      return matchesPrison && matchesStatus && matchesQuery;
+      return matchesPrison && matchesStatus && matchesKyn && matchesQuery;
     });
 
     // Apply sorting
@@ -811,7 +900,7 @@ export default function StjoriPage() {
     }
 
     return filtered;
-  }, [prisoners, prisonFilter, statusFilter, query, sortBy, sortDir]);
+  }, [prisoners, prisonFilter, statusFilter, kynFilter, query, sortBy, sortDir]);
 
   const getUtilizationColor = (utilization: number) => {
     if (utilization >= 95) return 'bg-destructive';
@@ -1036,15 +1125,17 @@ export default function StjoriPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-end">
             <div className="w-full md:w-56">
               <label className="text-sm text-muted-foreground">Fangelsi</label>
-              <Select value={prisonFilter} onValueChange={setPrisonFilter}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Veldu fangelsi" />
+              <Select value={prisonFilter} onValueChange={(v) => setPrisonFilter(v as FacilityKey | 'Allt')}>
+                <SelectTrigger className="mt-1" aria-label="Fangelsi">
+                  <SelectValue placeholder="Allt" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Allt</SelectItem>
-                  {facilities.map(f => (
-                    <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-                  ))}
+                  <SelectItem value="Allt">Allt</SelectItem>
+                  <SelectItem value="holmsheidi">{FACILITY_DISPLAY["holmsheidi"]}</SelectItem>
+                  <SelectItem value="sogn">{FACILITY_DISPLAY["sogn"]}</SelectItem>
+                  <SelectItem value="kviabryggja">{FACILITY_DISPLAY["kviabryggja"]}</SelectItem>
+                  <SelectItem value="litla-hraun">{FACILITY_DISPLAY["litla-hraun"]}</SelectItem>
+                  <SelectItem value="other">{FACILITY_DISPLAY["other"]}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1059,6 +1150,23 @@ export default function StjoriPage() {
                   <SelectItem value="all">Allt</SelectItem>
                   <SelectItem value="Gæsluvarðhald">Gæsluvarðhald</SelectItem>
                   <SelectItem value="Afplánun">Afplánun</SelectItem>
+                  <SelectItem value="Einangrun">Einangrun</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full md:w-48">
+              <label className="text-sm text-muted-foreground">Kyn</label>
+              <Select value={kynFilter} onValueChange={(v) => setKynFilter(v as any)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Allt" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Allt</SelectItem>
+                  <SelectItem value="Karlkyns">Karl (Karlkyns)</SelectItem>
+                  <SelectItem value="Kvenkyns">Kona (Kvenkyns)</SelectItem>
+                  <SelectItem value="Kynsegin">Kvár (Kynsegin)</SelectItem>
+                  <SelectItem value="Annað">Annað</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1073,7 +1181,7 @@ export default function StjoriPage() {
               />
             </div>
 
-            <Button variant="outline" onClick={() => { setPrisonFilter('all'); setStatusFilter('all'); setQuery(''); }}>
+            <Button variant="outline" onClick={() => { setPrisonFilter('Allt'); setStatusFilter('all'); setKynFilter('all'); setQuery(''); }}>
               Endurstilla síur
             </Button>
           </div>
@@ -1100,7 +1208,7 @@ export default function StjoriPage() {
             <div className="text-center py-8 text-muted-foreground">Hleður…</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-xs md:text-sm leading-tight">
+              <table className="w-full text-[13px] leading-tight">
                 <thead>
                   <tr className="border-b">
                     <SortHeader
@@ -1164,13 +1272,25 @@ export default function StjoriPage() {
                       </td>
                       <td className="p-1.5 md:p-2 whitespace-nowrap">{p.prisonerNumber}</td>
                       <td className="p-1.5 md:p-2 whitespace-nowrap">{p.kennitala}</td>
-                      <td className="p-1.5 md:p-2">{p.prisonName}</td>
+                      <td className="p-1.5 md:p-2 whitespace-nowrap">{canonicalFacilityLabel(p.prisonName)}</td>
                       <td className="p-1.5 md:p-2 whitespace-nowrap">{p.cell}</td>
-                      <td className="p-1.5 md:p-2">{p.lawyer}</td>
                       <td className="p-1.5 md:p-2">
-                        <Badge variant={p.status === 'Afplánun' ? 'default' : 'secondary'}>
+                        {p.lawyer ?? '—'}
+                        {p.lawyerPhone && (
+                          <span className="inline-flex gap-1 ml-2 align-middle">
+                            <a href={`tel:${p.lawyerPhone}`} aria-label="Hringja í lögmann" className="p-1 rounded hover:bg-gray-100" onClick={(e) => e.stopPropagation()}>
+                              <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                            </a>
+                            <a href={`sms:${p.lawyerPhone}`} aria-label="Senda SMS á lögmann" className="p-1 rounded hover:bg-gray-100" onClick={(e) => e.stopPropagation()}>
+                              <MessageSquareText className="h-3.5 w-3.5 text-muted-foreground" />
+                            </a>
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-1.5 md:p-2">
+                        <span className={`px-2 py-1 rounded-full text-[11px] ${STADA_STYLES[p.status] ?? 'bg-gray-100 text-gray-800 ring-1 ring-gray-200'}`}>
                           {p.status}
-                        </Badge>
+                        </span>
                       </td>
                       <td className="p-1.5 md:p-2">{p.notes ?? '—'}</td>
                     </tr>
@@ -1212,12 +1332,36 @@ export default function StjoriPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Info label="Fanganúmer" value={selected.prisonerNumber} />
                     <Info label="Kennitala" value={selected.kennitala} />
-                    <Info label="Fangelsi" value={selected.prisonName} />
+                    <Info label="Fangelsi" value={canonicalFacilityLabel(selected.prisonName)} />
                     <Info label="Deild" value={selected.department} />
                     <Info label="Klefi" value={selected.cell} />
                     <Info label="Staða" value={selected.status} />
-                    <Info label="Lögmaður" value={selected.lawyer} />
-                    <Info label="Sími lögmanns" value={selected.lawyerPhone} />
+
+                    {/* Lawyer with contact links */}
+                    <div className="space-y-1 col-span-2">
+                      <div className="text-xs text-muted-foreground">Lögmaður</div>
+                      <div className="text-sm font-medium">{selected.lawyer ?? '—'}</div>
+                      {selected.lawyerPhone && (
+                        <div className="flex gap-3 mt-1">
+                          <a href={`tel:${selected.lawyerPhone}`} className="inline-flex items-center gap-1 text-xs underline hover:text-primary">
+                            <Phone className="h-3.5 w-3.5" /> Sími
+                          </a>
+                          <a href={`sms:${selected.lawyerPhone}`} className="inline-flex items-center gap-1 text-xs underline hover:text-primary">
+                            <MessageSquareText className="h-3.5 w-3.5" /> SMS
+                          </a>
+                        </div>
+                      )}
+                      {selected.lawyerEmail ? (
+                        <div className="flex items-center gap-1 mt-1">
+                          <Mail className="h-3.5 w-3.5" />
+                          <a href={`mailto:${selected.lawyerEmail}`} className="text-xs underline hover:text-primary">{selected.lawyerEmail}</a>
+                          <span className="text-xs text-muted-foreground">— Netfang skráð.</span>
+                        </div>
+                      ) : (
+                        <div className="text-xs text-muted-foreground mt-1">Netfang vantar.</div>
+                      )}
+                    </div>
+
                     <Info label="Athugasemdir" value={selected.notes ?? '—'} />
                     <Info label="Ofnæmi" value={selected.medical?.allergies ?? '—'} />
                     <Info label="Lyf" value={selected.medical?.meds ?? '—'} />
