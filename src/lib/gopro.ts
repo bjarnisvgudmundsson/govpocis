@@ -9,42 +9,40 @@ let tokenCache: TokenBundle | null = null;
  * Store token bundle in memory and sessionStorage
  */
 export function setToken(bundle: TokenBundle): void {
-  console.log('[gopro.ts] setToken - Storing token:', bundle);
   tokenCache = bundle;
   if (typeof window !== 'undefined') {
-    sessionStorage.setItem('gopro_token', JSON.stringify(bundle));
-    console.log('[gopro.ts] setToken - Token stored in sessionStorage');
+    try {
+      sessionStorage.setItem('gopro_token', JSON.stringify(bundle));
+    } catch (e) {
+      console.error('[gopro.ts] Failed to store token in sessionStorage:', e);
+    }
   }
 }
 
 /**
  * Retrieve token bundle from cache or sessionStorage
+ * ALWAYS checks sessionStorage to ensure persistence across navigation
  */
 export function getToken(): TokenBundle | null {
-  if (tokenCache) {
-    console.log('[gopro.ts] getToken - Returning from cache:', tokenCache);
-    return tokenCache;
-  }
-
+  // Always read from sessionStorage in browser to handle module reinitialization
   if (typeof window !== 'undefined') {
     const raw = sessionStorage.getItem('gopro_token');
-    console.log('[gopro.ts] getToken - Raw from sessionStorage:', raw);
     if (!raw) {
-      console.error('[gopro.ts] getToken - No token in sessionStorage!');
+      tokenCache = null;
       return null;
     }
     try {
       tokenCache = JSON.parse(raw);
-      console.log('[gopro.ts] getToken - Parsed token:', tokenCache);
       return tokenCache;
     } catch (e) {
-      console.error('[gopro.ts] getToken - Failed to parse token:', e);
+      console.error('[gopro.ts] Failed to parse token from sessionStorage:', e);
+      tokenCache = null;
       return null;
     }
   }
 
-  console.error('[gopro.ts] getToken - Not in browser context');
-  return null;
+  // Fallback to cache if not in browser (shouldn't happen in practice)
+  return tokenCache;
 }
 
 /**
@@ -81,14 +79,11 @@ export async function authenticate(username: string, password: string): Promise<
  */
 export async function searchCases(idNumber: string): Promise<any> {
   const bundle = getToken();
-  console.log('[gopro.ts] searchCases - Token bundle:', bundle);
 
   if (!bundle?.token) {
-    console.error('[gopro.ts] searchCases - NO TOKEN FOUND!');
     throw new Error('Auðkenni vantar. Vinsamlega skráðu þig inn.');
   }
 
-  console.log('[gopro.ts] searchCases - Making request with token:', bundle.token.substring(0, 20) + '...');
   const res = await fetch('/api/cases/search', {
     method: 'POST',
     headers: {
