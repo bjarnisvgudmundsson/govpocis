@@ -511,9 +511,9 @@ export default function MyCasesPage() {
           variant: "destructive"
         });
 
-        // Clear session and redirect to login
+        // Clear storage and redirect to login
         if (typeof window !== 'undefined') {
-          sessionStorage.clear();
+          localStorage.clear();
         }
         router.push('/');
         return;
