@@ -6,27 +6,27 @@ export type TokenBundle = { token: string; expiresAt?: number };
 let tokenCache: TokenBundle | null = null;
 
 /**
- * Store token bundle in memory and sessionStorage
+ * Store token bundle in memory and localStorage
  */
 export function setToken(bundle: TokenBundle): void {
   tokenCache = bundle;
   if (typeof window !== 'undefined') {
     try {
-      sessionStorage.setItem('gopro_token', JSON.stringify(bundle));
+      localStorage.setItem('gopro_token', JSON.stringify(bundle));
     } catch (e) {
-      console.error('[gopro.ts] Failed to store token in sessionStorage:', e);
+      console.error('[gopro.ts] Failed to store token in localStorage:', e);
     }
   }
 }
 
 /**
- * Retrieve token bundle from cache or sessionStorage
- * ALWAYS checks sessionStorage to ensure persistence across navigation
+ * Retrieve token bundle from cache or localStorage
+ * ALWAYS checks localStorage to ensure persistence across navigation
  */
 export function getToken(): TokenBundle | null {
-  // Always read from sessionStorage in browser to handle module reinitialization
+  // Always read from localStorage in browser to handle module reinitialization
   if (typeof window !== 'undefined') {
-    const raw = sessionStorage.getItem('gopro_token');
+    const raw = localStorage.getItem('gopro_token');
     if (!raw) {
       tokenCache = null;
       return null;
@@ -35,7 +35,7 @@ export function getToken(): TokenBundle | null {
       tokenCache = JSON.parse(raw);
       return tokenCache;
     } catch (e) {
-      console.error('[gopro.ts] Failed to parse token from sessionStorage:', e);
+      console.error('[gopro.ts] Failed to parse token from localStorage:', e);
       tokenCache = null;
       return null;
     }
@@ -51,7 +51,7 @@ export function getToken(): TokenBundle | null {
 export function clearToken(): void {
   tokenCache = null;
   if (typeof window !== 'undefined') {
-    sessionStorage.removeItem('gopro_token');
+    localStorage.removeItem('gopro_token');
   }
 }
 

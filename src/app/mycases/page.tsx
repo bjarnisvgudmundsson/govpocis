@@ -357,8 +357,8 @@ export default function MyCasesPage() {
     try {
       // Get token from gopro helper
       const tokenBundle = getToken();
-      const username = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_username') : null;
-      const idNumber = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_idnumber') : null;
+      const username = typeof window !== 'undefined' ? localStorage.getItem('gopro_username') : null;
+      const idNumber = typeof window !== 'undefined' ? localStorage.getItem('gopro_idnumber') : null;
 
       setUserInfo({ token: tokenBundle?.token || null, username, idNumber });
 
@@ -414,8 +414,8 @@ export default function MyCasesPage() {
     hasLoadedRef.current = true;
 
     const tokenBundle = getToken();
-    const username = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_username') : null;
-    const idNumber = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_idnumber') : null;
+    const username = typeof window !== 'undefined' ? localStorage.getItem('gopro_username') : null;
+    const idNumber = typeof window !== 'undefined' ? localStorage.getItem('gopro_idnumber') : null;
 
     setUserInfo({ token: tokenBundle?.token || null, username, idNumber });
 

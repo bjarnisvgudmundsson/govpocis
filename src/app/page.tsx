@@ -53,10 +53,10 @@ export default function LoginPage() {
       // Store GoPro token with expiry
       setToken(tokenBundle);
 
-      // Also store username and idNumber in sessionStorage for display purposes
+      // Also store username and idNumber in localStorage for display purposes
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('gopro_username', mainAuthUsername);
-        sessionStorage.setItem('gopro_idnumber', idNumber);
+        localStorage.setItem('gopro_username', mainAuthUsername);
+        localStorage.setItem('gopro_idnumber', idNumber);
       }
 
       // Automatically store the hardcoded Business Central token for demo purposes

@@ -97,7 +97,6 @@ export function Navigation() {
     clearToken();
     clearBusinessCentralToken();
     if (typeof window !== 'undefined') {
-      sessionStorage.clear();
       localStorage.clear();
     }
     router.push('/');
