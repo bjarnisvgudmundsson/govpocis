@@ -79,11 +79,14 @@ export async function authenticate(username: string, password: string): Promise<
  */
 export async function searchCases(idNumber: string): Promise<any> {
   const bundle = getToken();
+  console.log('[gopro.ts searchCases] Token bundle:', bundle);
 
   if (!bundle?.token) {
+    console.error('[gopro.ts searchCases] NO TOKEN!');
     throw new Error('Auðkenni vantar. Vinsamlega skráðu þig inn.');
   }
 
+  console.log('[gopro.ts searchCases] Calling API with token:', bundle.token.substring(0, 30) + '...');
   const res = await fetch('/api/cases/search', {
     method: 'POST',
     headers: {
@@ -93,21 +96,27 @@ export async function searchCases(idNumber: string): Promise<any> {
     body: JSON.stringify({ contactIdNumber: idNumber }),
   });
 
+  console.log('[gopro.ts searchCases] Response status:', res.status);
+
   // Accept refresh from server if provided
   const refreshed = res.headers.get('x-refreshed-token');
   if (refreshed) {
+    console.log('[gopro.ts searchCases] Got refreshed token from server!');
     setToken({ token: refreshed, expiresAt: Date.now() + 25 * 60 * 1000 });
   }
 
   if (res.status === 401) {
+    console.error('[gopro.ts searchCases] Got 401 from API!');
     throw new Error('Auðkenni útrunnið. Vinsamlega skráðu þig inn á ný.');
   }
 
   if (!res.ok) {
     const { error } = await res.json().catch(() => ({ error: res.statusText }));
+    console.error('[gopro.ts searchCases] API error:', error);
     throw new Error(error || 'Leit mistókst');
   }
 
+  console.log('[gopro.ts searchCases] Success!');
   return res.json();
 }
 

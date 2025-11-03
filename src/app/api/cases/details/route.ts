@@ -5,7 +5,7 @@ async function callGetCase(token: string, body: unknown) {
   return fetch('https://demo.gopro.net/demo-is/services/v2/Case/GetCase', {
     method: 'POST',
     headers: {
-      'Token': token, // GoPro expects 'Token'
+      'Authorization': `Bearer ${token}`, // GoPro expects Authorization: Bearer
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
