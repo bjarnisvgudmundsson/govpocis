@@ -16,7 +16,8 @@ import {
   Shield,
   User,
 } from 'lucide-react';
-import { getStoredCredentials, clearCredentials } from '@/lib/api-client';
+import { clearToken } from '@/lib/gopro';
+import { clearBusinessCentralToken } from '@/lib/api-client';
 import type { CredentialInfo } from '@/types';
 
 const navigationItems = [
@@ -93,7 +94,12 @@ export function Navigation() {
   if (pathname === '/') return null; 
 
   const handleLogout = () => {
-    clearCredentials();
+    clearToken();
+    clearBusinessCentralToken();
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
     router.push('/');
   };
 

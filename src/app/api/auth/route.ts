@@ -35,7 +35,13 @@ export async function POST(request: NextRequest) {
     }
     
     const token = await response.text();
-    return NextResponse.json({ token: token.replace(/"/g, '') });
+    // Assume ~30 min token lifetime; refresh a bit earlier to be safe
+    const expiresAt = Date.now() + 25 * 60 * 1000;
+
+    return NextResponse.json({
+      token: token.replace(/"/g, ''),
+      expiresAt
+    });
     
   } catch (error) {
     console.error('Auth proxy error:', error);

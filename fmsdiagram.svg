@@ -1,0 +1,180 @@
+<svg viewBox="0 0 1400 1600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="1600" fill="white"/>
+
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004da6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a3d5c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d1f2d;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrowblue" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#0066cc"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="50" font-size="32" font-weight="bold" text-anchor="middle" fill="#0066cc" font-family="Arial, sans-serif">
+    GoPro Foris (Case) & CaseDoc – Fangelsismál
+  </text>
+  <text x="700" y="85" font-size="14" text-anchor="middle" fill="#666" font-family="Arial, sans-serif">
+    Heildstæð mála- og skjalastjórnun með réttar- og gáttartengingum
+  </text>
+
+  <!-- LAYER A: FMS sértæk virkni (efst) -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="120" width="1300" height="160" fill="url(#blueGradient)" rx="8" stroke="#004da6" stroke-width="2"/>
+    <text x="700" y="150" font-size="18" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">
+      FMS – Viðmót & sértæk virkni (efsta lag)
+    </text>
+
+    <rect x="80" y="170" width="290" height="90" fill="#f0f5ff" rx="6" stroke="#0066cc" stroke-width="1"/>
+    <text x="225" y="192" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Atvik & aðgerðir</text>
+    <text x="95" y="212" font-size="10" fill="#333" font-family="Arial, sans-serif">• Einföld skráning, úrlausn og áfrýjun</text>
+    <text x="95" y="230" font-size="10" fill="#333" font-family="Arial, sans-serif">• Rekjanleiki og tilkynningar</text>
+
+    <rect x="395" y="170" width="290" height="90" fill="#f0f5ff" rx="6" stroke="#0066cc" stroke-width="1"/>
+    <text x="540" y="192" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Vaktkerfi</text>
+    <text x="410" y="212" font-size="10" fill="#333" font-family="Arial, sans-serif">• Dagbók, viðvaranir og stöður</text>
+    <text x="410" y="230" font-size="10" fill="#333" font-family="Arial, sans-serif">• Yfirsýn fyrir vaktstjóra</text>
+
+    <rect x="710" y="170" width="290" height="90" fill="#f0f5ff" rx="6" stroke="#0066cc" stroke-width="1"/>
+    <text x="855" y="192" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Sértæk FMS-eiginleikar</text>
+    <text x="725" y="212" font-size="10" fill="#333" font-family="Arial, sans-serif">• Reglur, hlutverk og samþykktir</text>
+    <text x="725" y="230" font-size="10" fill="#333" font-family="Arial, sans-serif">• Þjónustubeiðnir fanga o.fl.</text>
+
+    <rect x="1025" y="170" width="290" height="90" fill="#f0f5ff" rx="6" stroke="#0066cc" stroke-width="1"/>
+    <text x="1170" y="192" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Skýrslugerð</text>
+    <text x="1040" y="212" font-size="10" fill="#333" font-family="Arial, sans-serif">• KPI mælaborð og tölfræði</text>
+    <text x="1040" y="230" font-size="10" fill="#333" font-family="Arial, sans-serif">• Útflutningur (t.d. Excel/Power BI)</text>
+  </g>
+
+  <!-- Down arrow -->
+  <path d="M 700 280 L 700 310" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+
+  <!-- LAYER B: CaseDoc -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="320" width="1300" height="160" fill="#e8f2ff" rx="8" stroke="#0066cc" stroke-width="2"/>
+    <text x="700" y="350" font-size="18" font-weight="bold" text-anchor="middle" fill="#0066cc" font-family="Arial, sans-serif">
+      CaseDoc – Réttarferli & tengingar
+    </text>
+
+    <rect x="80" y="370" width="510" height="90" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="335" y="392" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Réttarferli</text>
+    <text x="95" y="412" font-size="10" fill="#333" font-family="Arial, sans-serif">• Sakborningar • Lögmenn • Ákæruliðir • Sakfellingar • Dómar</text>
+
+    <rect x="610" y="370" width="740" height="90" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="980" y="392" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Tengingar & gáttir</text>
+    <text x="625" y="412" font-size="10" fill="#333" font-family="Arial, sans-serif">• RESTful API • Tenging við Réttarvörslugátt • Samþætting við ytri kerfi</text>
+  </g>
+
+  <!-- Down arrow -->
+  <path d="M 700 480 L 700 510" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+
+  <!-- LAYER C: GoPro Case kjarni -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="520" width="1300" height="170" fill="#f9f9f9" rx="8" stroke="#0066cc" stroke-width="2"/>
+    <text x="700" y="550" font-size="18" font-weight="bold" text-anchor="middle" fill="#0066cc" font-family="Arial, sans-serif">
+      GoPro Case – Kjarni (málastjórnun & skjalavarsla)
+    </text>
+
+    <rect x="80" y="570" width="1240" height="100" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="100" y="600" font-size="10" fill="#333" font-family="Arial, sans-serif">
+      • Málaskrá • Skjalasafn • Sniðmát • Aðgangsstýring/öryggi • Verk/verkferlar • Samningar • Samþykktarferli
+    </text>
+  </g>
+
+  <!-- Down arrow -->
+  <path d="M 700 690 L 700 720" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+
+  <!-- LAYER D: Innviðir / hýsing -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="730" width="1300" height="180" fill="#e8f2ff" rx="8" stroke="#0066cc" stroke-width="2"/>
+    <text x="700" y="760" font-size="18" font-weight="bold" text-anchor="middle" fill="#0066cc" font-family="Arial, sans-serif">
+      Innviðir – SQL & forritunarþjónar / hýsingarkostir
+    </text>
+
+    <rect x="80" y="780" width="350" height="100" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="255" y="802" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Gagnagrunnur</text>
+    <text x="95" y="822" font-size="10" fill="#333" font-family="Arial, sans-serif">• Microsoft SQL Server • Afritun og endurheimt (PITR)</text>
+
+    <rect x="450" y="780" width="350" height="100" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="625" y="802" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Forritunarþjónn</text>
+    <text x="465" y="822" font-size="10" fill="#333" font-family="Arial, sans-serif">• Útsetning, álagsjöfnun og afkastaeftirlit</text>
+
+    <rect x="820" y="780" width="510" height="100" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="1075" y="802" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Hýsing</text>
+    <text x="835" y="822" font-size="10" fill="#333" font-family="Arial, sans-serif">• GoPro Cloud (Azure) • Azure (stofnana-tenant) • RLS gagnaver / on-premise</text>
+  </g>
+
+  <!-- Down arrow -->
+  <path d="M 700 900 L 700 930" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+
+  <!-- SECURITY & COMPLIANCE -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="940" width="1300" height="210" fill="#f9f9f9" rx="8" stroke="#0066cc" stroke-width="2"/>
+    <text x="700" y="970" font-size="18" font-weight="bold" text-anchor="middle" fill="#0066cc" font-family="Arial, sans-serif">
+      Öryggi & fylgni
+    </text>
+
+    <rect x="80" y="990" width="300" height="140" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="230" y="1012" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Aðgangsstýring (RBAC)</text>
+    <text x="95" y="1032" font-size="10" fill="#333" font-family="Arial, sans-serif">• Hlutverkaréttindi, tímabundnir aðgangar</text>
+    <text x="95" y="1050" font-size="10" fill="#333" font-family="Arial, sans-serif">• Rekjanlegar samþykktir og undirritanir</text>
+
+    <rect x="400" y="990" width="300" height="140" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="550" y="1012" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Dulritun & gagnavernd</text>
+    <text x="415" y="1032" font-size="10" fill="#333" font-family="Arial, sans-serif">• Í geymslu og í flutningi • Örugg eyðing</text>
+    <text x="415" y="1050" font-size="10" fill="#333" font-family="Arial, sans-serif">• Lykilstjórnun og aðgangsstefna</text>
+
+    <rect x="720" y="990" width="300" height="140" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="870" y="1012" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Auðkenning</text>
+    <text x="735" y="1032" font-size="10" fill="#333" font-family="Arial, sans-serif">• Fjölþátta-auðkenning (MFA), SSO</text>
+    <text x="735" y="1050" font-size="10" fill="#333" font-family="Arial, sans-serif">• Takmörkun innskráningartilrauna, lykilorðastefna</text>
+
+    <rect x="1040" y="990" width="300" height="140" fill="white" rx="6" stroke="#0066cc" stroke-width="1.5"/>
+    <text x="1190" y="1012" font-size="11" font-weight="bold" fill="#0066cc" font-family="Arial, sans-serif">Rekjanleiki & samræmi</text>
+    <text x="1055" y="1032" font-size="10" fill="#333" font-family="Arial, sans-serif">• Atburðaskráning og breytingasaga</text>
+    <text x="1055" y="1050" font-size="10" fill="#333" font-family="Arial, sans-serif">• ISO 27001 • Persónuverndarlög</text>
+  </g>
+
+  <!-- Down arrow -->
+  <path d="M 700 1155 L 700 1185" stroke="#0066cc" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+
+  <!-- VALUE PROPS -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="1195" width="1300" height="180" fill="url(#darkGradient)" rx="8" stroke="#1a3d5c" stroke-width="2"/>
+    <text x="700" y="1225" font-size="16" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">
+      Aðalskilaboð til yfirstjórnar – ávinningur
+    </text>
+
+    <rect x="80" y="1250" width="300" height="95" fill="#ffffff" rx="6"/>
+    <text x="230" y="1272" font-size="11" font-weight="bold" fill="#0066cc" text-anchor="middle" font-family="Arial, sans-serif">Gagnsæi & ábyrgð</text>
+    <text x="95" y="1292" font-size="10" fill="#333" font-family="Arial, sans-serif">Rekjanleiki, mælaborð og stöðluð skýrslugerð.</text>
+
+    <rect x="400" y="1250" width="300" height="95" fill="#ffffff" rx="6"/>
+    <text x="550" y="1272" font-size="11" font-weight="bold" fill="#0066cc" text-anchor="middle" font-family="Arial, sans-serif">Gagnaöryggi innbyggt</text>
+    <text x="415" y="1292" font-size="10" fill="#333" font-family="Arial, sans-serif">Dulritun, RBAC, MFA og samræmi við lög.</text>
+
+    <rect x="720" y="1250" width="300" height="95" fill="#ffffff" rx="6"/>
+    <text x="870" y="1272" font-size="11" font-weight="bold" fill="#0066cc" text-anchor="middle" font-family="Arial, sans-serif">Samþætting án tvískráningar</text>
+    <text x="735" y="1292" font-size="10" fill="#333" font-family="Arial, sans-serif">API/gáttir – eitt sannleiksgildi í kjarna.</text>
+
+    <rect x="1040" y="1250" width="300" height="95" fill="#ffffff" rx="6"/>
+    <text x="1190" y="1272" font-size="11" font-weight="bold" fill="#0066cc" text-anchor="middle" font-family="Arial, sans-serif">Rekstraráreiðanleiki</text>
+    <text x="1055" y="1292" font-size="10" fill="#333" font-family="Arial, sans-serif">Azure/GoPro Cloud/RLS – afritun og endurheimt.</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="700" y="1405" font-size="12" text-anchor="middle" fill="#666" font-family="Arial, sans-serif">
+    Lagskipt lausn: FMS-viðmót → CaseDoc → GoPro Case → SQL/App → Hýsing
+  </text>
+  <text x="700" y="1430" font-size="11" text-anchor="middle" fill="#999" font-family="Arial, sans-serif">
+    Engin tvískráning • Öryggi & fylgni • Skalanleg innleiðing
+  </text>
+</svg>

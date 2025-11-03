@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { authenticate, storeCredentials, storeBusinessCentralToken } from '@/lib/api-client';
+import { authenticate, setToken } from '@/lib/gopro';
+import { storeBusinessCentralToken } from '@/lib/api-client';
 import { DEMO_BC_TOKEN } from '@/lib/constants';
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, KeyRound } from 'lucide-react';
@@ -43,15 +44,20 @@ export default function LoginPage() {
       // Always perform main authentication
       const mainAuthUsername = username || 'bjarni';
       const mainAuthPassword = password || 'Hugvit1';
-      const mainAppToken = await authenticate(mainAuthUsername, mainAuthPassword);
+      const tokenBundle = await authenticate(mainAuthUsername, mainAuthPassword);
 
-      if (!mainAppToken) {
+      if (!tokenBundle || !tokenBundle.token) {
           throw new Error("Ekki tókst að nálgast auðkennislykil fyrir aðalinnskráningu.");
       }
 
-      // Store main credentials
-      const displayUsername = username || 'bjarni';
-      storeCredentials(mainAppToken, displayUsername, idNumber);
+      // Store GoPro token with expiry
+      setToken(tokenBundle);
+
+      // Also store username and idNumber in sessionStorage for display purposes
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('gopro_username', mainAuthUsername);
+        sessionStorage.setItem('gopro_idnumber', idNumber);
+      }
 
       // Automatically store the hardcoded Business Central token for demo purposes
       if (DEMO_BC_TOKEN) {
@@ -60,18 +66,17 @@ export default function LoginPage() {
 
       toast({
         title: "Innskráning tókst!",
-        description: `Velkomin/n, ${displayUsername}.`,
+        description: `Velkomin/n, ${mainAuthUsername}.`,
       });
       router.push('/dashboard');
 
     } catch (err) {
       console.error('Login error:', err);
       const errorMessage = err instanceof Error ? err.message : "Óþekkt villa kom upp.";
-      let fullErrorMessage = `Innskráning mistókst: ${errorMessage}`;
-      setError(fullErrorMessage);
+      setError(errorMessage);
       toast({
         title: "Innskráning mistókst",
-        description: fullErrorMessage,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

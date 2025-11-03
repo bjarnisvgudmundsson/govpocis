@@ -34,7 +34,8 @@ import {
   Search,
 } from 'lucide-react';
 import type { Case, CaseContact, CredentialInfo } from '@/types';
-import { getStoredCredentials, searchCases, getCaseDetails, getCaseContacts, getStoredBusinessCentralToken } from '@/lib/api-client';
+import { getToken, searchCases, getCaseDetails, getCaseContacts } from '@/lib/gopro';
+import { getStoredBusinessCentralToken } from '@/lib/api-client';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import parse from 'html-react-parser';
@@ -354,16 +355,21 @@ export default function MyCasesPage() {
     setLoading(true);
     setError('');
     try {
-      const creds = getStoredCredentials();
-      setUserInfo(creds);
-      if (!creds.token || !creds.idNumber) {
+      // Get token from gopro helper
+      const tokenBundle = getToken();
+      const username = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_username') : null;
+      const idNumber = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_idnumber') : null;
+
+      setUserInfo({ token: tokenBundle?.token || null, username, idNumber });
+
+      if (!tokenBundle?.token || !idNumber) {
         router.push('/');
         toast({ title: "Notandi ekki innskráður", description: "Vinsamlegast skráðu þig inn aftur.", variant: "destructive" });
         setLoading(false);
         return;
       }
 
-      const response = await searchCases(creds.token, '2110705959');
+      const response = await searchCases('2110705959');
 
       if (response.succeeded) {
         setCases(response.cases || []);
@@ -379,33 +385,23 @@ export default function MyCasesPage() {
     } catch (err) {
       console.error('Error loading cases:', err);
       const errorMessage = err instanceof Error ? err.message : 'Óþekkt villa við að sækja mál';
-      
+
       // Check if this is a 401 authentication error
-      if (errorMessage.includes('401') || errorMessage.includes('útrunninn') || errorMessage.includes('expired')) {
-        let title = "Token útrunninn";
-        let description = "Vinsamlega skráðu þig inn aftur.";
-        
-        if (errorMessage.includes('GoPro')) {
-          title = "GoPro token útrunninn";
-        } else if (errorMessage.includes('Business Central')) {
-          title = "Business Central token útrunninn";
-          description = "BC token þarf að endurnýja.";
-        }
-        
-        toast({ 
-          title: title, 
-          description: description, 
-          variant: "destructive" 
+      if (errorMessage.includes('útrunnið') || errorMessage.includes('Auðkenni vantar')) {
+        toast({
+          title: "Auðkenni útrunnið",
+          description: "Vinsamlega skráðu þig inn aftur.",
+          variant: "destructive"
         });
-        
-        // Only clear credentials and redirect for GoPro token expiration
-        if (errorMessage.includes('GoPro')) {
-          localStorage.clear();
-          router.push('/');
+
+        // Clear session and redirect to login
+        if (typeof window !== 'undefined') {
+          sessionStorage.clear();
         }
+        router.push('/');
         return;
       }
-      
+
       setError(errorMessage);
       toast({ title: "Villa við að sækja mál", description: errorMessage, variant: "destructive" });
     } finally {
@@ -417,9 +413,13 @@ export default function MyCasesPage() {
     if (hasLoadedRef.current) return;
     hasLoadedRef.current = true;
 
-    const creds = getStoredCredentials();
-    setUserInfo(creds);
-    if (!creds.token || !creds.idNumber) {
+    const tokenBundle = getToken();
+    const username = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_username') : null;
+    const idNumber = typeof window !== 'undefined' ? sessionStorage.getItem('gopro_idnumber') : null;
+
+    setUserInfo({ token: tokenBundle?.token || null, username, idNumber });
+
+    if (!tokenBundle?.token || !idNumber) {
       router.push('/');
       return;
     }
@@ -464,8 +464,8 @@ export default function MyCasesPage() {
     setCaseContacts([]);
     setContactsError('');
 
-    const creds = getStoredCredentials();
-    if (!creds.token) {
+    const tokenBundle = getToken();
+    if (!tokenBundle?.token) {
       toast({ title: "Notandi ekki innskráður", description: "Vinsamlegast skráðu þig inn aftur.", variant: "destructive" });
       setLoadingDetails(false);
       setSheetOpen(false);
@@ -474,8 +474,8 @@ export default function MyCasesPage() {
     }
 
     try {
-      const detailsPromise = getCaseDetails(creds.token, caseItem.caseNumber);
-      const contactsPromise = getCaseContacts(creds.token, caseItem.caseNumber);
+      const detailsPromise = getCaseDetails(caseItem.caseNumber);
+      const contactsPromise = getCaseContacts(caseItem.caseNumber);
 
       const [detailsResponse, contactsResponse] = await Promise.all([detailsPromise, contactsPromise]);
 
@@ -502,6 +502,23 @@ export default function MyCasesPage() {
     } catch (err) {
       console.error('Error in handleOpenCase:', err);
       const errorMessage = err instanceof Error ? err.message : "Óvænt villa kom upp við að sækja málsgögn.";
+
+      // Check if this is a 401 authentication error
+      if (errorMessage.includes('útrunnið') || errorMessage.includes('Auðkenni vantar')) {
+        toast({
+          title: "Auðkenni útrunnið",
+          description: "Vinsamlega skráðu þig inn aftur.",
+          variant: "destructive"
+        });
+
+        // Clear session and redirect to login
+        if (typeof window !== 'undefined') {
+          sessionStorage.clear();
+        }
+        router.push('/');
+        return;
+      }
+
       toast({ title: "Óvænt villa", description: errorMessage, variant: "destructive" });
       setSelectedCase(caseItem);
     } finally {
