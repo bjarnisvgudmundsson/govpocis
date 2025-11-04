@@ -527,6 +527,13 @@ export default function MyCasesPage() {
   }
 
   const filteredCases = cases.filter(caseItem => {
+    // Exclude completed and archived cases
+    const status = caseItem.statusName?.toLowerCase() || '';
+    if (status === 'lokið' || status === 'fært í skjalasafn') {
+      return false;
+    }
+
+    // Then apply search filter
     const term = searchTerm.toLowerCase();
     if (!term) return true;
     return (
