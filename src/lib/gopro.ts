@@ -111,7 +111,8 @@ export async function searchCases(idNumber: string): Promise<any> {
   }
 
   if (!res.ok) {
-    const { error } = await res.json().catch(() => ({ error: res.statusText }));
+    const data = await res.json().catch(() => ({ error: res.statusText }));
+    const error = data.error || data.message || res.statusText;
     console.error('[gopro.ts searchCases] API error:', error);
     throw new Error(error || 'Leit mistókst');
   }
@@ -149,7 +150,8 @@ export async function getCaseDetails(caseNumber: string): Promise<any> {
   }
 
   if (!res.ok) {
-    const { error } = await res.json().catch(() => ({ error: res.statusText }));
+    const data = await res.json().catch(() => ({ error: res.statusText }));
+    const error = data.error || data.message || res.statusText;
     throw new Error(error || 'Mistókst að sækja málsgögn');
   }
 
@@ -185,7 +187,8 @@ export async function getCaseContacts(caseNumber: string): Promise<any> {
   }
 
   if (!res.ok) {
-    const { error } = await res.json().catch(() => ({ error: res.statusText }));
+    const data = await res.json().catch(() => ({ error: res.statusText }));
+    const error = data.error || data.message || res.statusText;
     throw new Error(error || 'Mistókst að sækja málsaðila');
   }
 

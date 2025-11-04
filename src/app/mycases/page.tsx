@@ -493,7 +493,15 @@ export default function MyCasesPage() {
       } else {
         const errorMsg = contactsResponse.message || 'Mistókst að sækja málsaðila';
         console.error('Error fetching case contacts:', errorMsg);
-        setContactsError(errorMsg);
+
+        // Handle duplicate case number gracefully
+        if (errorMsg.includes('duplication') || errorMsg.includes('More than one case')) {
+          setContactsError('Málsnúmer er tvítekið í kerfinu. Hafðu samband við kerfisstjóra.');
+        } else {
+          setContactsError(errorMsg);
+        }
+
+        // Only show toast if details also failed (don't spam user)
         if (!(detailsResponse.succeeded && detailsResponse.case)) {
           toast({ title: "Villa", description: errorMsg, variant: "destructive" });
         }
