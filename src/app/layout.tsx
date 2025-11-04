@@ -5,8 +5,8 @@ import { Navigation } from '@/components/layout/navigation';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'STJÓRNENDAGÁTT Pro',
-  description: 'Case management system for Landspítali Norðursins',
+  title: 'FMS govpocis',
+  description: 'Fangelsismálastofnun - Málaskrá og stjórnkerfi',
 };
 
 export default function RootLayout({
