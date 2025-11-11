@@ -20,8 +20,8 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
     kennitala: '',
     name: '',
     address: '',
-    prison: '',
-    ward: '',
+    prison: 'Hólmsheiði',
+    ward: 'A',
     cell: '',
     healthChecks: {
       likamsleit: false,
@@ -31,6 +31,51 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
     },
     notes: ''
   });
+
+  // Mock data lookup - in real app this would call an API
+  const lookupKennitala = (kennitala: string) => {
+    // Remove formatting and check if it's our demo kennitala
+    const cleanKennitala = kennitala.replace(/[-\s]/g, '');
+
+    if (cleanKennitala === '2110705959') {
+      setFormData(prev => ({
+        ...prev,
+        name: 'Bjarni Sv. Guðmundsson',
+        address: 'Bæjargil 97'
+      }));
+    }
+  };
+
+  // Format kennitala with dash
+  const formatKennitala = (value: string) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '');
+
+    // Add dash after 6 digits
+    if (digits.length <= 6) {
+      return digits;
+    }
+    return `${digits.slice(0, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const handleKennitalaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatKennitala(e.target.value);
+    setFormData(prev => ({ ...prev, kennitala: formatted }));
+
+    // Auto-lookup when complete
+    if (formatted.length === 11) {
+      lookupKennitala(formatted);
+    }
+  };
+
+  // Get available cells (A06 and A07 are available, others are occupied)
+  const getAvailableCells = () => {
+    const allCells = ['A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07'];
+    const occupiedCells = ['A01', 'A02', 'A03', 'A04', 'A05'];
+    return allCells.filter(cell => !occupiedCells.includes(cell));
+  };
+
+  const availableCells = getAvailableCells();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +88,7 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Innkoma Fanga</DialogTitle>
+          <DialogTitle>Innskráning Fanga</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -52,8 +97,9 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
               <Input
                 id="kennitala"
                 value={formData.kennitala}
-                onChange={(e) => setFormData(prev => ({ ...prev, kennitala: e.target.value }))}
+                onChange={handleKennitalaChange}
                 placeholder="000000-0000"
+                maxLength={11}
               />
             </div>
             <div className="space-y-2">
@@ -63,6 +109,8 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="Nafn verður sótt úr Þjóðskrá"
+                readOnly
+                className="bg-muted"
               />
             </div>
           </div>
@@ -74,45 +122,42 @@ export function InkomModal({ open, onOpenChange }: InkomModalProps) {
               value={formData.address}
               onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
               placeholder="Heimilisfang verður sótt úr Þjóðskrá"
+              readOnly
+              className="bg-muted"
             />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Fangelsi</Label>
-              <Select value={formData.prison} onValueChange={(value) => setFormData(prev => ({ ...prev, prison: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Veldu fangelsi" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="holmsheidi">Hólmsheiði</SelectItem>
-                  <SelectItem value="kviabryggja">Kvíabryggja</SelectItem>
-                  <SelectItem value="sogn">Sogn</SelectItem>
-                  <SelectItem value="litla-hraun">Litla Hraun</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                value={formData.prison}
+                readOnly
+                className="bg-muted"
+              />
             </div>
             <div className="space-y-2">
               <Label>Deild</Label>
-              <Select value={formData.ward} onValueChange={(value) => setFormData(prev => ({ ...prev, ward: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Veldu deild" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="a-deild">A-deild</SelectItem>
-                  <SelectItem value="b-deild">B-deild</SelectItem>
-                  <SelectItem value="c-deild">C-deild</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                value={formData.ward}
+                readOnly
+                className="bg-muted"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="cell">Klefi</Label>
-              <Input
-                id="cell"
-                value={formData.cell}
-                onChange={(e) => setFormData(prev => ({ ...prev, cell: e.target.value }))}
-                placeholder="A-12"
-              />
+              <Label>Klefi</Label>
+              <Select value={formData.cell} onValueChange={(value) => setFormData(prev => ({ ...prev, cell: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Veldu klefi" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCells.map(cell => (
+                    <SelectItem key={cell} value={cell}>
+                      {cell} (Laus)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

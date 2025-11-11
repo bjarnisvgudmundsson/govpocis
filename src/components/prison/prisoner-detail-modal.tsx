@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { prisonDataService, type Prisoner, type LogEntry } from '@/lib/prison-data';
 import { StatusBadge } from '@/components/ui/status-badge';
+import photoMap from '@/app/data/prisonerPhotos.json';
 
 interface PrisonerDetailModalProps {
   cellId: string | null;
@@ -37,6 +40,25 @@ export function PrisonerDetailModal({ cellId, open, onOpenChange }: PrisonerDeta
     }
   }, [cellId, open]);
 
+  // Get photo URL for prisoner
+  const getPrisonerPhotoUrl = (prisoner: Prisoner | null) => {
+    if (!prisoner) return null;
+
+    // Convert ID to p-XXX format (e.g., '1' -> 'p-001')
+    const paddedId = `p-${prisoner.id.padStart(3, '0')}`;
+    const mapped = (photoMap as Record<string, string>)[paddedId];
+    const base = process.env.NEXT_PUBLIC_PHOTO_BASE ?? '';
+
+    if (mapped) {
+      return `${base}${mapped}`;
+    }
+
+    // Fallback to initials avatar
+    return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(prisoner.name)}`;
+  };
+
+  const photoUrl = getPrisonerPhotoUrl(prisoner);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'normal':
@@ -63,15 +85,35 @@ export function PrisonerDetailModal({ cellId, open, onOpenChange }: PrisonerDeta
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            Klef {cellId}
-            {prisoner && (
-              <Badge className={getStatusColor(prisoner.status)}>
-                {prisoner.status === 'normal' && 'Venjuleg staða'}
-                {prisoner.status === 'medical' && 'Þarfnast læknishjálpar'}
-                {prisoner.status === 'isolation' && 'Einangrun'}
-              </Badge>
+          <DialogTitle className="flex items-center gap-3">
+            {prisoner && photoUrl && (
+              <Avatar className="h-12 w-12 rounded-xl">
+                <AvatarImage
+                  src={photoUrl}
+                  alt={`Mynd af ${prisoner.name}`}
+                />
+                <AvatarFallback className="rounded-xl">
+                  {prisoner.name.split(' ').map(s => s[0]).join('').slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
             )}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                {prisoner ? prisoner.name : `Klef ${cellId}`}
+                {prisoner && (
+                  <Badge className={getStatusColor(prisoner.status)}>
+                    {prisoner.status === 'normal' && 'Venjuleg staða'}
+                    {prisoner.status === 'medical' && 'Þarfnast læknishjálpar'}
+                    {prisoner.status === 'isolation' && 'Einangrun'}
+                  </Badge>
+                )}
+              </div>
+              {prisoner && (
+                <div className="text-sm font-normal text-muted-foreground">
+                  Klefi {cellId} · {prisoner.ward}
+                </div>
+              )}
+            </div>
           </DialogTitle>
         </DialogHeader>
 
@@ -98,20 +140,12 @@ export function PrisonerDetailModal({ cellId, open, onOpenChange }: PrisonerDeta
                 <CardContent className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-sm font-medium text-muted-foreground">Nafn</div>
-                      <div className="font-semibold">{prisoner.name}</div>
-                    </div>
-                    <div>
                       <div className="text-sm font-medium text-muted-foreground">ID</div>
                       <div className="font-mono text-sm">{prisoner.id}</div>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-muted-foreground">Kennitala</div>
                       <div className="font-mono text-sm">{prisoner.kennitala}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground">Deild</div>
-                      <div>{prisoner.ward}</div>
                     </div>
                   </div>
                 </CardContent>

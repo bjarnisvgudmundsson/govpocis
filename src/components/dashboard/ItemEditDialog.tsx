@@ -45,6 +45,19 @@ export function ItemEditDialog({
 
   if (!item) return null;
 
+  // Translation mapping for item types
+  const typeTranslations: { [key: string]: string } = {
+    'approval': 'SAMÞYKKI',
+    'task': 'VERKEFNI',
+    'contract': 'SAMNINGI',
+    'document': 'SKJALI'
+  };
+
+  const getTranslatedType = (type: string) => {
+    const lowerType = type.toLowerCase();
+    return typeTranslations[lowerType] || type.toUpperCase();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission here
@@ -67,7 +80,7 @@ export function ItemEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-headline">BREYTA {item.type.toUpperCase()}</DialogTitle>
+          <DialogTitle className="text-2xl font-headline">BREYTA {getTranslatedType(item.type)}</DialogTitle>
           <DialogDescription>
             Breyttu upplýsingum um þetta verk
           </DialogDescription>

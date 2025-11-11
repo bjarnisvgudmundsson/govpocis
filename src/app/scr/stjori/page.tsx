@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -924,6 +925,9 @@ export default function StjoriPage() {
         <div>
           <h1 className="text-3xl font-bold font-headline">Stjórnendayfirlit</h1>
         </div>
+        <Link href="/arsskyrsla">
+          <Button className="rounded-2xl" variant="secondary">Ársyfirlit</Button>
+        </Link>
       </div>
 
       {/* System Overview Stats */}

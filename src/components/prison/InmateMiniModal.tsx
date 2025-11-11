@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { prisonDataService } from '@/lib/prison-data';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import photoMap from '@/app/data/prisonerPhotos.json';
 
 type Props = {
   open: boolean;
@@ -32,17 +34,62 @@ export default function InmateMiniModal({ open, onOpenChange, inmateId, inmateCo
 
   const data = d ?? { name: inmateCode ?? 'Óþekktur', cell:'—', unit:'—', status:'—', notes:[], incidents:[], actions:[], health:[] };
 
+  // Get photo URL for prisoner
+  const getPrisonerPhotoUrl = (id: string | null) => {
+    if (!id) return null;
+
+    // Map floorplan IDs (a1, b2, g3, etc.) to prisoner numeric IDs
+    const idMap: Record<string, string> = {
+      'a1': '1', 'a2': '2', 'a3': '3', 'a4': '4', 'a5': '5',
+      'b1': '6', 'b2': '7', 'b3': '8', 'b4': '9', 'b5': '10',
+      'c1': '11', 'c2': '12', 'c3': '13', 'c4': '14',
+      'e1': '15', 'e2': '16',
+      'g1': '17', 'g2': '18'
+    };
+
+    const prisonerId = idMap[id] || id;
+
+    // Convert ID to p-XXX format (e.g., '1' -> 'p-001')
+    const paddedId = `p-${prisonerId.padStart(3, '0')}`;
+    const mapped = (photoMap as Record<string, string>)[paddedId];
+    const base = process.env.NEXT_PUBLIC_PHOTO_BASE ?? '';
+
+    if (mapped) {
+      return `${base}${mapped}`;
+    }
+
+    // Fallback to initials avatar
+    return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(data.name)}`;
+  };
+
+  const photoUrl = getPrisonerPhotoUrl(inmateId);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>{data.name}</span>
-            <span className="text-sm text-muted-foreground">Klefi: {data.cell}</span>
+          <DialogTitle className="flex items-center gap-3">
+            {photoUrl && (
+              <Avatar className="h-12 w-12 rounded-xl">
+                <AvatarImage
+                  src={photoUrl}
+                  alt={`Mynd af ${data.name}`}
+                />
+                <AvatarFallback className="rounded-xl">
+                  {data.name.split(' ').map((s: string) => s[0]).join('').slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <div className="flex flex-col gap-1 flex-1">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-lg">{data.name}</span>
+                <span className="text-sm text-muted-foreground">Klefi: {data.cell}</span>
+              </div>
+              <div className="text-sm font-normal text-muted-foreground">
+                Deild: {data.unit} • Staða: {data.status}
+              </div>
+            </div>
           </DialogTitle>
-          <DialogDescription className="text-xs">
-            Deild: {data.unit} • Staða: {data.status}
-          </DialogDescription>
         </DialogHeader>
 
         {loading ? <div className="p-4 text-sm text-muted-foreground">Hleð…</div> : (

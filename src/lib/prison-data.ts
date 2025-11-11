@@ -337,18 +337,44 @@ export const prisonDataService = {
 
   // Get detailed inmate data for modal
   async getInmate(id: string) {
-    // Return realistic mock if no backend yet
+    // Map floorplan IDs (a1, b2, g3, etc.) to prisoner numeric IDs
+    const idMap: Record<string, string> = {
+      'a1': '1', 'a2': '2', 'a3': '3', 'a4': '4', 'a5': '5',
+      'b1': '6', 'b2': '7', 'b3': '8', 'b4': '9', 'b5': '10',
+      'c1': '11', 'c2': '12', 'c3': '13', 'c4': '14',
+      'e1': '15', 'e2': '16',
+      'g1': '17', 'g2': '18'
+    };
+
     const now = new Date().toLocaleString('is-IS');
-    const prisoner = mockPrisoners.find(p => p.id === id);
-    const name = prisoner ? prisoner.name : `Fangi ${id}`;
-    const cell = prisoner ? prisoner.cell : 'B07';
-    const unit = prisoner ? prisoner.ward : 'B-Álma';
-    const status = prisoner?.status === 'normal' ? 'Venjulegt' :
-                   prisoner?.status === 'isolation' ? 'Einangrun' :
-                   prisoner?.status === 'medical' ? 'Læknishjálp' : 'Venjulegt';
+    const prisonerId = idMap[id] || id;
+    const prisoner = mockPrisoners.find(p => p.id === prisonerId);
+
+    if (!prisoner) {
+      return {
+        id,
+        name: `Fangi ${id}`,
+        cell: '—',
+        unit: '—',
+        status: 'Óþekkt',
+        caseOfficer: '—',
+        updatedAt: now,
+        incidents: [],
+        actions: [],
+        notes: [],
+        health: []
+      };
+    }
+
+    const name = prisoner.name;
+    const cell = prisoner.cell;
+    const unit = prisoner.ward;
+    const status = prisoner.status === 'normal' ? 'Venjulegt' :
+                   prisoner.status === 'isolation' ? 'Einangrun' :
+                   prisoner.status === 'medical' ? 'Læknishjálp' : 'Venjulegt';
 
     return {
-      id,
+      id: prisonerId,
       name,
       cell,
       unit,
@@ -359,7 +385,7 @@ export const prisonDataService = {
         { id:'i1', time:'09:25', title:'Létt atvik', summary:'Smávægileg ágreiningur í matsal.' }
       ],
       actions: [
-        { id:'a1', time:'10:10', title:'Flutningur', detail:'Fluttur í klefa B07 eftir viðtal.' }
+        { id:'a1', time:'10:10', title:'Heimsókn', detail:'Heimsókn frá fjölskyldu.' }
       ],
       notes: [
         { id:'n1', author:'Yfirvörður', title:'Athugasemd', text:'Sýnir góða framkomu.' }
