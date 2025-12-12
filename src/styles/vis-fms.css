@@ -1,0 +1,244 @@
+/* vis-timeline FMS styling */
+
+/* Import base vis-timeline styles */
+@import 'vis-timeline/styles/vis-timeline-graph2d.min.css';
+
+/* Timeline container */
+.fms-timeline-container {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  background: white;
+  overflow: hidden;
+}
+
+/* Reduce timeline padding for density */
+.vis-timeline {
+  border: none;
+  font-family: inherit;
+}
+
+.vis-panel.vis-center,
+.vis-panel.vis-top,
+.vis-panel.vis-bottom {
+  border-color: hsl(var(--border));
+}
+
+.vis-time-axis .vis-text {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+}
+
+.vis-labelset .vis-label {
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  position: relative;
+}
+
+/* Alternate group row backgrounds */
+.vis-labelset .vis-label:nth-child(odd) {
+  background: hsl(var(--muted) / 0.15);
+}
+
+.vis-labelset .vis-label:nth-child(even) {
+  background: white;
+}
+
+/* Colored bar on left of each group */
+.vis-labelset .vis-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+
+.vis-labelset .vis-label:nth-child(1)::before { background: #fb7185; } /* Atvik */
+.vis-labelset .vis-label:nth-child(2)::before { background: #818cf8; } /* Mál */
+.vis-labelset .vis-label:nth-child(3)::before { background: #94a3b8; } /* Skjal */
+.vis-labelset .vis-label:nth-child(4)::before { background: #fbbf24; } /* Flutningur */
+.vis-labelset .vis-label:nth-child(5)::before { background: #4ade80; } /* Heilsufar */
+.vis-labelset .vis-label:nth-child(6)::before { background: #a78bfa; } /* Heimsókn */
+
+/* FMS Item base styling - soft pills */
+.vis-item {
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  box-shadow: none;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.vis-item.vis-selected {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.vis-item .vis-item-content {
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Type-specific styling - soft pastels */
+.fms-type-atvik {
+  background: #ffe4e6;
+  border-color: #fda4af;
+  color: #be123c;
+}
+
+.fms-type-mál {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+  color: #4338ca;
+}
+
+.fms-type-skjal {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.fms-type-flutningur {
+  background: #fef3c7;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+
+.fms-type-heilsufar {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.fms-type-heimsókn {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #6b21a8;
+}
+
+/* Severity indicators - left border accent + pseudo-element dot for high */
+.fms-sev-high {
+  border-left-width: 3px;
+  font-weight: 600;
+  position: relative;
+}
+
+.fms-sev-high::before {
+  content: '!';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.fms-sev-high .vis-item-content {
+  padding-left: 18px;
+}
+
+.fms-type-atvik.fms-sev-high {
+  background: #fecdd3;
+  border-left-color: #fb7185;
+}
+
+.fms-type-mál.fms-sev-high {
+  background: #c7d2fe;
+  border-left-color: #818cf8;
+}
+
+.fms-type-skjal.fms-sev-high {
+  background: #e2e8f0;
+  border-left-color: #94a3b8;
+}
+
+.fms-type-flutningur.fms-sev-high {
+  background: #fde68a;
+  border-left-color: #fbbf24;
+}
+
+.fms-type-heilsufar.fms-sev-high {
+  background: #bbf7d0;
+  border-left-color: #4ade80;
+}
+
+.fms-type-heimsókn.fms-sev-high {
+  background: #ddd6fe;
+  border-left-color: #a78bfa;
+}
+
+.fms-sev-medium {
+  border-left-width: 2px;
+}
+
+.fms-sev-low {
+  border-left-width: 1px;
+}
+
+/* Point items - hide labels when zoomed out */
+.vis-item.vis-point {
+  padding: 0;
+}
+
+.vis-item.vis-point .vis-item-content {
+  display: none;
+}
+
+/* Cluster styling */
+.vis-cluster {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* Current time indicator - today line */
+.vis-current-time {
+  background-color: #dc2626;
+  width: 2px;
+  z-index: 10;
+}
+
+/* Custom time bar (if used) */
+.vis-custom-time {
+  background-color: #3b82f6;
+  width: 2px;
+}
+
+/* Burst bands */
+.vis-burst-high {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.vis-burst-medium {
+  background: rgba(245, 158, 11, 0.06);
+}
+
+/* Time axis labels */
+.vis-time-axis .vis-text {
+  font-size: 11px;
+}
+
+.vis-labelset .vis-label {
+  font-size: 11px;
+  font-weight: 500;
+  padding-left: 8px;
+}

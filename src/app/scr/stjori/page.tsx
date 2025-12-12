@@ -1393,7 +1393,12 @@ export default function StjoriPage() {
 
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setSelected(null)}>Loka</Button>
-                <Button>Opna málaskrá</Button>
+                <Button onClick={() => {
+                  setSelected(null);
+                  window.location.href = `/scr/stjori/fangi/${selected.id}`;
+                }}>
+                  Meiri upplýsingar
+                </Button>
               </div>
             </>
           )}
